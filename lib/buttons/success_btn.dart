@@ -16,6 +16,7 @@ class SuccessBtn extends StatelessWidget {
           textStyle: TextStyle(fontSize: 24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Colors.grey, width: 4),
           ),
         ),
         child: Text("Yes!", style: TextStyle(fontSize: 40)),
