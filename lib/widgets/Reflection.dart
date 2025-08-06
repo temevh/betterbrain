@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-class FeedbackInput extends StatefulWidget {
-  const FeedbackInput({super.key});
+class Reflection extends StatefulWidget {
+  const Reflection({super.key});
 
   @override
-  State<FeedbackInput> createState() => _FeedbackInputState();
+  State<Reflection> createState() => _ReflectionState();
 }
 
-class _FeedbackInputState extends State<FeedbackInput> {
+class _ReflectionState extends State<Reflection> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text("Optional feedback", style: TextStyle(fontSize: 22)),
+        const Text("Optional reflection", style: TextStyle(fontSize: 22)),
 
         Center(
           child: SizedBox(
@@ -23,7 +23,7 @@ class _FeedbackInputState extends State<FeedbackInput> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16), // rounded corners
                 ),
-                hintText: 'Write your feedback here...',
+                hintText: 'Write your reflection here...',
                 filled: true,
                 fillColor: Colors.white,
               ),

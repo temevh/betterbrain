@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/widgets/Feedbackrow.dart';
-import 'package:namer_app/widgets/Feedback_input.dart';
+import 'package:namer_app/widgets/Reflection.dart';
 import 'package:namer_app/buttons/save_btn.dart';
 
 class SuccessScreen extends StatefulWidget {
@@ -24,7 +24,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 40),
                     const Text(
                       "🎉 Good job!",
                       style: TextStyle(
@@ -53,19 +52,15 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         style: TextStyle(color: Colors.white, fontSize: 22),
                       ),
                     ),
-                    const SizedBox(height: 60),
-                    const Text(
-                      "How did the task feel?",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20),
-                    ),
+                    const SizedBox(height: 40),
+
                     FeedbackRow(
                       onFeedbackSelected: (feedback) {
                         print("User selected feedback: $feedback");
                       },
                     ),
-                    const SizedBox(height: 10),
-                    const FeedbackInput(),
+                    const SizedBox(height: 40),
+                    const Reflection(),
                   ],
                 ),
               ),

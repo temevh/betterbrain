@@ -7,25 +7,35 @@ class FeedbackRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
-        _FeedbackButton(
-          emoji: '😓',
-          label: 'Too hard',
-          feedbackValue: 'too_hard',
+    return Column(
+      children: [
+        const Text(
+          "How did the task feel?",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 30),
         ),
-        SizedBox(width: 20),
-        _FeedbackButton(
-          emoji: '🙂',
-          label: 'Just right',
-          feedbackValue: 'just_right',
-        ),
-        SizedBox(width: 20),
-        _FeedbackButton(
-          emoji: '😴',
-          label: 'Too easy',
-          feedbackValue: 'too_easy',
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            _FeedbackButton(
+              emoji: '😓',
+              label: 'Too hard',
+              feedbackValue: 'too_hard',
+            ),
+            SizedBox(width: 20),
+            _FeedbackButton(
+              emoji: '🙂',
+              label: 'Just right',
+              feedbackValue: 'just_right',
+            ),
+            SizedBox(width: 20),
+            _FeedbackButton(
+              emoji: '😴',
+              label: 'Too easy',
+              feedbackValue: 'too_easy',
+            ),
+          ],
         ),
       ],
     );
@@ -49,16 +59,14 @@ class _FeedbackButton extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            // Use Navigator.of(context).maybePop() or callback to send feedback
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('Feedback: $label')));
-            // You could also lift state up or use a callback here if needed
           },
           child: CircleAvatar(
-            radius: 30,
+            radius: 40,
             backgroundColor: Colors.grey[800],
-            child: Text(emoji, style: const TextStyle(fontSize: 28)),
+            child: Text(emoji, style: const TextStyle(fontSize: 36)),
           ),
         ),
         const SizedBox(height: 6),
