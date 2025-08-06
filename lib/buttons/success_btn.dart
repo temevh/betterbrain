@@ -8,7 +8,7 @@ class SuccessBtn extends StatelessWidget {
     return SizedBox(
       width: 350,
       child: ElevatedButton(
-        onPressed: () => {},
+        onPressed: () => {Navigator.pushNamed(context, '/success')},
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
           foregroundColor: Colors.white,
