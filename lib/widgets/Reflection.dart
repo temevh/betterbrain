@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Reflection extends StatefulWidget {
-  const Reflection({super.key});
+  final void Function(String) onChanged;
+
+  const Reflection({super.key, required this.onChanged});
 
   @override
   State<Reflection> createState() => _ReflectionState();
@@ -27,6 +29,7 @@ class _ReflectionState extends State<Reflection> {
                 filled: true,
                 fillColor: Colors.white,
               ),
+              onChanged: widget.onChanged,
               maxLines: 4,
             ),
           ),

@@ -11,14 +11,28 @@ class SuccessScreen extends StatefulWidget {
 }
 
 class _SuccessScreenState extends State<SuccessScreen> {
+  int? selectedFeedback;
+  String reflectionText = "";
+
+  void _onFeedbackSelected(int feedback) {
+    setState(() {
+      selectedFeedback = feedback;
+    });
+  }
+
+  void _onReflectionTextChanged(String text) {
+    setState(() {
+      reflectionText = text;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green,
       body: SafeArea(
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceBetween, // 👈 Pushes SaveBtn to bottom
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: SingleChildScrollView(
@@ -54,21 +68,14 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     ),
                     const SizedBox(height: 40),
 
-                    FeedbackRow(
-                      onFeedbackSelected: (feedback) {
-                        print("User selected feedback: $feedback");
-                      },
-                    ),
+                    FeedbackRow(onFeedbackSelected: _onFeedbackSelected),
                     const SizedBox(height: 40),
-                    const Reflection(),
+                    Reflection(onChanged: _onReflectionTextChanged),
                   ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0), // 👈 Optional padding
-              child: SaveBtn(),
-            ),
+            Padding(padding: const EdgeInsets.all(16.0), child: SaveBtn()),
           ],
         ),
       ),

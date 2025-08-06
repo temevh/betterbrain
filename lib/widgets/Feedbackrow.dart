@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FeedbackRow extends StatelessWidget {
-  final void Function(String feedback) onFeedbackSelected;
+  final void Function(int feedback) onFeedbackSelected;
 
   const FeedbackRow({super.key, required this.onFeedbackSelected});
 
@@ -17,23 +17,26 @@ class FeedbackRow extends StatelessWidget {
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             _FeedbackButton(
               emoji: '😓',
               label: 'Too hard',
-              feedbackValue: 'too_hard',
+              feedbackValue: -1,
+              onPressed: onFeedbackSelected,
             ),
             SizedBox(width: 20),
             _FeedbackButton(
               emoji: '🙂',
               label: 'Just right',
-              feedbackValue: 'just_right',
+              feedbackValue: 0,
+              onPressed: onFeedbackSelected,
             ),
             SizedBox(width: 20),
             _FeedbackButton(
               emoji: '😴',
               label: 'Too easy',
-              feedbackValue: 'too_easy',
+              feedbackValue: 1,
+              onPressed: onFeedbackSelected,
             ),
           ],
         ),
@@ -45,12 +48,14 @@ class FeedbackRow extends StatelessWidget {
 class _FeedbackButton extends StatelessWidget {
   final String emoji;
   final String label;
-  final String feedbackValue;
+  final int feedbackValue;
+  final void Function(int feedback) onPressed;
 
   const _FeedbackButton({
     required this.emoji,
     required this.label,
     required this.feedbackValue,
+    required this.onPressed,
   });
 
   @override
@@ -59,6 +64,10 @@ class _FeedbackButton extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
+            // Call the parent's callback with the feedbackValue
+            onPressed(feedbackValue);
+
+            // Optionally show snackbar for UI feedback
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('Feedback: $label')));
