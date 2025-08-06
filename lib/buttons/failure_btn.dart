@@ -16,6 +16,7 @@ class FailureBtn extends StatelessWidget {
           textStyle: TextStyle(fontSize: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Colors.grey, width: 2),
           ),
         ),
         child: Text("Not yet..."),
