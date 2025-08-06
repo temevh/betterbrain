@@ -26,6 +26,11 @@ class _SuccessScreenState extends State<SuccessScreen> {
     });
   }
 
+  void _onSavePressed() {
+    print("User feedback selection: $selectedFeedback");
+    print("User reflection text: $reflectionText");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +80,10 @@ class _SuccessScreenState extends State<SuccessScreen> {
                 ),
               ),
             ),
-            Padding(padding: const EdgeInsets.all(16.0), child: SaveBtn()),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SaveBtn(onPressed: _onSavePressed),
+            ),
           ],
         ),
       ),

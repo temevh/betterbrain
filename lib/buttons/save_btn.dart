@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 class SaveBtn extends StatelessWidget {
-  const SaveBtn({super.key});
+  final VoidCallback onPressed;
+
+  const SaveBtn({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity, // Full width inside the padding
+      width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
+          onPressed();
           Navigator.pushNamed(context, '/');
         },
         style: ElevatedButton.styleFrom(
