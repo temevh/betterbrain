@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/widgets/Feedbackrow.dart';
 import 'package:namer_app/widgets/Reflection.dart';
 import 'package:namer_app/buttons/save_btn.dart';
+import 'package:namer_app/widgets/task_reflection.dart';
 
 class SuccessScreen extends StatefulWidget {
   const SuccessScreen({super.key});
@@ -51,26 +52,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       ),
                     ),
                     const SizedBox(height: 40),
-                    const Text(
-                      "Todays task was:",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    const Text(
-                      "Talk to 3 new people",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Opacity(
-                      opacity: 0.5,
-                      child: Text(
-                        'Social',
-                        style: TextStyle(color: Colors.white, fontSize: 22),
-                      ),
-                    ),
+                    TaskReflection(),
                     const SizedBox(height: 40),
 
                     FeedbackRow(
