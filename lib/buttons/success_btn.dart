@@ -16,7 +16,7 @@ class SuccessBtn extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (_) => const MainScreen(showGreenBackground: true),
+                builder: (_) => const MainScreen(isCompleted: true),
               ),
             );
           }

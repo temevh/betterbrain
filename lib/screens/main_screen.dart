@@ -4,26 +4,26 @@ import '../buttons/success_btn.dart';
 import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
-  final bool showGreenBackground;
+  final bool isCompleted;
 
-  const MainScreen({super.key, this.showGreenBackground = false});
+  const MainScreen({super.key, this.isCompleted = false});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late bool _showGreen;
+  late bool _completed;
 
   @override
   void initState() {
     super.initState();
-    _showGreen = widget.showGreenBackground;
+    _completed = widget.isCompleted;
 
-    if (_showGreen) {
+    if (_completed) {
       Future.delayed(const Duration(seconds: 10), () {
         setState(() {
-          _showGreen = false;
+          _completed = false;
         });
       });
     }
@@ -32,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _showGreen ? Colors.green : const Color(0xFF2B2726),
+      backgroundColor: _completed ? Colors.green : const Color(0xFF2B2726),
       body: Center(
         child: SafeArea(
           child: Column(
@@ -42,14 +42,16 @@ class _MainScreenState extends State<MainScreen> {
               Image.asset('assets/images/talking.png', height: 340),
               const TaskBox(),
               const SizedBox(height: 10),
-              const Text(
-                "Did you do it?",
+              Text(
+                _completed ? "Well done!" : "Did you do it?",
                 style: TextStyle(color: Colors.white, fontSize: 28),
               ),
               const SizedBox(height: 20),
-              const SuccessBtn(),
-              const SizedBox(height: 10),
-              const FailureBtn(),
+              if (!_completed) ...[
+                const SuccessBtn(),
+                const SizedBox(height: 10),
+                const FailureBtn(),
+              ],
             ],
           ),
         ),

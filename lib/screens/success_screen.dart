@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/widgets/Feedbackrow.dart';
-import 'package:namer_app/widgets/Reflection.dart';
+import 'package:namer_app/widgets/feedback_row.dart';
+import 'package:namer_app/widgets/reflection.dart';
 import 'package:namer_app/buttons/save_btn.dart';
 import 'package:namer_app/widgets/task_reflection.dart';
 
