@@ -73,7 +73,10 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     ),
                     const SizedBox(height: 40),
 
-                    FeedbackRow(onFeedbackSelected: _onFeedbackSelected),
+                    FeedbackRow(
+                      selectedFeedback: selectedFeedback,
+                      onFeedbackSelected: _onFeedbackSelected,
+                    ),
                     const SizedBox(height: 40),
                     Reflection(onChanged: _onReflectionTextChanged),
                   ],
