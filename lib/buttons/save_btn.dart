@@ -12,7 +12,7 @@ class SaveBtn extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           onPressed();
-          Navigator.pushNamed(context, '/');
+          Navigator.pop(context, true);
         },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 20),

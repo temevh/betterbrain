@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/main_screen.dart';
 
 class SuccessBtn extends StatelessWidget {
   const SuccessBtn({super.key});
@@ -8,7 +9,18 @@ class SuccessBtn extends StatelessWidget {
     return SizedBox(
       width: 350,
       child: ElevatedButton(
-        onPressed: () => {Navigator.pushNamed(context, '/success')},
+        onPressed: () async {
+          final result = await Navigator.pushNamed(context, '/success');
+
+          if (result == true) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const MainScreen(showGreenBackground: true),
+              ),
+            );
+          }
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
           foregroundColor: Colors.white,
