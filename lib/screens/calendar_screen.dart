@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:namer_app/widgets/calendar_box.dart';
+import 'package:intl/intl.dart';
 
 class Event {
   final String title;
   final bool isCompleted;
-  Event({required this.title, required this.isCompleted});
+  final String category;
+  Event({
+    required this.title,
+    required this.isCompleted,
+    required this.category,
+  });
 }
 
 class CalendarScreen extends StatefulWidget {
@@ -29,10 +36,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     _events = {
       _normalizeDate(DateTime.now()): [
-        Event(title: 'Morning Run', isCompleted: true),
+        Event(
+          title: 'Read a book for 12 minutes',
+          category: "focus",
+          isCompleted: false,
+        ),
       ],
       _normalizeDate(DateTime.now().add(const Duration(days: 1))): [
-        Event(title: 'Gym Session', isCompleted: true),
+        Event(title: 'Gym Session', category: "health", isCompleted: true),
       ],
     };
   }
@@ -134,16 +145,43 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
-          /// List of events for the selected day
           Expanded(
             child: ListView(
               children: _getEventsForDay(_selectedDay ?? _focusedDay)
                   .map(
-                    (event) => ListTile(
-                      title: Text(event.title),
-                      trailing: Icon(
-                        event.isCompleted ? Icons.check_circle : Icons.cancel,
-                        color: event.isCompleted ? Colors.green : Colors.red,
+                    (event) => Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 20, 8, 20),
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.green,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                event.title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                DateFormat(
+                                  'yyyy-MM-dd',
+                                ).format(_selectedDay ?? _focusedDay),
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   )
