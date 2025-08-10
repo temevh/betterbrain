@@ -19,6 +19,10 @@ class MyApp extends StatelessWidget {
           bodyColor: Colors.white,
           displayColor: Colors.white,
         ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF2B2726),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 24),
+        ),
       ),
       initialRoute: '/',
       routes: appRoutes,
