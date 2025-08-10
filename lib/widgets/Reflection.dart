@@ -29,6 +29,7 @@ class _ReflectionState extends State<Reflection> {
                 filled: true,
                 fillColor: Colors.white,
               ),
+              style: TextStyle(color: Colors.black),
               onChanged: widget.onChanged,
               maxLines: 4,
             ),
