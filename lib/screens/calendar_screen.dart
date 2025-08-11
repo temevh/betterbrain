@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:namer_app/widgets/calendar_box.dart';
-import 'package:intl/intl.dart';
+import 'package:namer_app/widgets/event_card.dart';
 
 class Event {
   final String title;
@@ -170,71 +170,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
               children: _getEventsForDay(_selectedDay ?? _focusedDay).map((
                 event,
               ) {
-                // Get all events for the selected day to determine container color
                 final dayEvents = _getEventsForDay(_selectedDay ?? _focusedDay);
-                bool allCompleted = dayEvents.every((e) => e.isCompleted);
-                bool allNotCompleted = dayEvents.every((e) => !e.isCompleted);
-
-                Color containerColor = Colors.green;
-                if (allCompleted) {
-                  containerColor = Colors.green;
-                } else if (allNotCompleted) {
-                  containerColor = Colors.red;
-                }
-
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 20, 8, 20),
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(20),
-                        color: containerColor,
-                        border: Border.all(width: 2, color: Colors.white),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: const Offset(6, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            event.title,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Opacity(
-                            opacity: 0.7,
-                            child: Text(
-                              event.category.toUpperCase(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            DateFormat(
-                              'yyyy-MM-dd',
-                            ).format(_selectedDay ?? _focusedDay),
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                return EventCard(
+                  event: event,
+                  selectedDate: _selectedDay ?? _focusedDay,
+                  dayEvents: dayEvents,
                 );
               }).toList(),
             ),
