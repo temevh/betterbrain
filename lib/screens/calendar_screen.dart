@@ -85,31 +85,47 @@ class _CalendarScreenState extends State<CalendarScreen> {
             },
             eventLoader: _getEventsForDay,
             calendarFormat: CalendarFormat.month,
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+              titleTextStyle: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
             calendarBuilders: CalendarBuilders(
+              markerBuilder: (context, day, events) {
+                return const SizedBox();
+              },
               defaultBuilder: (context, day, focusedDay) {
                 final events = _getEventsForDay(day);
-
                 if (events.isEmpty) {
                   return Center(child: Text('${day.day}'));
                 }
 
-                // Check if ANY event for the day is incomplete or complete
                 bool allCompleted = events.every((event) => event.isCompleted);
                 bool allNotCompleted = events.every(
                   (event) => !event.isCompleted,
                 );
+                Color bgColor = allCompleted
+                    ? Colors.green
+                    : allNotCompleted
+                    ? Colors.red
+                    : Colors.orange;
 
-                Color bgColor = Colors.green;
-                if (allCompleted) {
-                  bgColor = Colors.green;
-                } else if (allNotCompleted) {
-                  bgColor = Colors.red;
-                }
-
-                return Container(
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: bgColor,
                     shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: bgColor.withOpacity(0.4),
+                        blurRadius: 6,
+                        spreadRadius: 1,
+                      ),
+                    ],
                   ),
                   margin: const EdgeInsets.all(6),
                   alignment: Alignment.center,
@@ -120,58 +136,72 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 );
               },
 
-              // Selected day styling
               selectedBuilder: (context, day, focusedDay) {
+                // Detect if it's today
+                bool isToday = isSameDay(day, DateTime.now());
+
                 final events = _getEventsForDay(day);
+                Color bgColor;
 
-                // Default color for days without events
-                Color bgColor = Colors.transparent;
-
-                if (events.isNotEmpty) {
-                  // Apply same color logic as defaultBuilder
-                  bool allCompleted = events.every(
-                    (event) => event.isCompleted,
-                  );
-                  bool allNotCompleted = events.every(
-                    (event) => !event.isCompleted,
-                  );
+                if (isToday) {
+                  bgColor = Colors.purple; // today color
+                } else if (events.isNotEmpty) {
+                  bool allCompleted = events.every((e) => e.isCompleted);
+                  bool allNotCompleted = events.every((e) => !e.isCompleted);
 
                   if (allCompleted) {
                     bgColor = Colors.green;
                   } else if (allNotCompleted) {
                     bgColor = Colors.red;
                   } else {
-                    bgColor = Colors.green; // Default for mixed states
+                    bgColor = Colors.orange; // mixed state
                   }
+                } else {
+                  bgColor = Colors.transparent;
                 }
 
                 return Container(
                   decoration: BoxDecoration(
                     color: bgColor,
                     shape: BoxShape.circle,
-                    border: Border.all(width: 3, color: Colors.white),
+                    border: Border.all(
+                      width: 3,
+                      color: Colors.white,
+                    ), // white border
                   ),
                   margin: const EdgeInsets.all(6),
                   alignment: Alignment.center,
                   child: Text(
                     '${day.day}',
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 );
               },
 
-              // Today styling
               todayBuilder: (context, day, focusedDay) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.purple,
-                    shape: BoxShape.circle,
-                  ),
-                  margin: const EdgeInsets.all(6),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '${day.day}',
-                    style: const TextStyle(color: Colors.white),
+                return Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.purple,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.purple,
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    margin: const EdgeInsets.all(6),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 );
               },

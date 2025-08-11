@@ -50,6 +50,7 @@ class EventCard extends StatelessWidget {
             children: [
               Text(
                 event.title,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: containerColor,
                   fontSize: 32,
