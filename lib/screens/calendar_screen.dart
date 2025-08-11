@@ -191,6 +191,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(20),
                         color: containerColor,
+                        border: Border.all(width: 2, color: Colors.white),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black,
+                            offset: const Offset(6, 8),
+                          ),
+                        ],
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
