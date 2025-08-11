@@ -109,10 +109,34 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
               // Selected day styling
               selectedBuilder: (context, day, focusedDay) {
+                final events = _getEventsForDay(day);
+
+                // Default color for days without events
+                Color bgColor = Colors.transparent;
+
+                if (events.isNotEmpty) {
+                  // Apply same color logic as defaultBuilder
+                  bool allCompleted = events.every(
+                    (event) => event.isCompleted,
+                  );
+                  bool allNotCompleted = events.every(
+                    (event) => !event.isCompleted,
+                  );
+
+                  if (allCompleted) {
+                    bgColor = Colors.green;
+                  } else if (allNotCompleted) {
+                    bgColor = Colors.red;
+                  } else {
+                    bgColor = Colors.green; // Default for mixed states
+                  }
+                }
+
                 return Container(
                   decoration: BoxDecoration(
-                    color: Colors.blueAccent,
+                    color: bgColor,
                     shape: BoxShape.circle,
+                    border: Border.all(width: 3, color: Colors.white),
                   ),
                   margin: const EdgeInsets.all(6),
                   alignment: Alignment.center,
@@ -143,45 +167,69 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
           Expanded(
             child: ListView(
-              children: _getEventsForDay(_selectedDay ?? _focusedDay)
-                  .map(
-                    (event) => Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 20, 8, 20),
-                      child: Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.green,
+              children: _getEventsForDay(_selectedDay ?? _focusedDay).map((
+                event,
+              ) {
+                // Get all events for the selected day to determine container color
+                final dayEvents = _getEventsForDay(_selectedDay ?? _focusedDay);
+                bool allCompleted = dayEvents.every((e) => e.isCompleted);
+                bool allNotCompleted = dayEvents.every((e) => !e.isCompleted);
+
+                Color containerColor = Colors.green;
+                if (allCompleted) {
+                  containerColor = Colors.green;
+                } else if (allNotCompleted) {
+                  containerColor = Colors.red;
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 20, 8, 20),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(20),
+                        color: containerColor,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            event.title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                event.title,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                ),
+                          const SizedBox(height: 8),
+                          Opacity(
+                            opacity: 0.7,
+                            child: Text(
+                              event.category.toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                DateFormat(
-                                  'yyyy-MM-dd',
-                                ).format(_selectedDay ?? _focusedDay),
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 8),
+                          Text(
+                            DateFormat(
+                              'yyyy-MM-dd',
+                            ).format(_selectedDay ?? _focusedDay),
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                  .toList(),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
