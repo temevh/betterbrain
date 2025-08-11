@@ -1,0 +1,18 @@
+{
+  "2025-08-13": [
+    {
+      "title": "Read a book for 12 minutes",
+      "category": "focus",
+      "isCompleted": false,
+      "difficulty": -1
+    }
+  ],
+  "2025-08-14": [
+    {
+      "title": "Gym Session",
+      "category": "health",
+      "isCompleted": true,
+      "difficulty": 1
+    }
+  ]
+}

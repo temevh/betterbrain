@@ -29,3 +29,4 @@ flutter:
           style: italic
   assets:
     - assets/images/
+    - assets/events.json

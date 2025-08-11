@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:namer_app/widgets/event_card.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class Event {
   final String title;
@@ -29,30 +31,35 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _normalizeDate(DateTime date) =>
       DateTime(date.year, date.month, date.day);
 
-  late final Map<DateTime, List<Event>> _events;
+  late Map<DateTime, List<Event>> _events = {};
 
   @override
   void initState() {
     super.initState();
+    _loadEvents();
+  }
 
-    _events = {
-      _normalizeDate(DateTime.now().add(const Duration(days: 2))): [
-        Event(
-          title: 'Read a book for 12 minutes',
-          category: "focus",
-          isCompleted: false,
-          difficulty: -1,
-        ),
-      ],
-      _normalizeDate(DateTime.now().add(const Duration(days: 3))): [
-        Event(
-          title: 'Gym Session',
-          category: "health",
-          isCompleted: true,
-          difficulty: 1,
-        ),
-      ],
-    };
+  Future<void> _loadEvents() async {
+    final String jsonString = await rootBundle.loadString('assets/events.json');
+    final Map<String, dynamic> jsonData = json.decode(jsonString);
+
+    final Map<DateTime, List<Event>> loadedEvents = {};
+
+    jsonData.forEach((dateString, eventList) {
+      DateTime date = DateTime.parse(dateString);
+      loadedEvents[_normalizeDate(date)] = (eventList as List).map((event) {
+        return Event(
+          title: event['title'],
+          category: event['category'],
+          isCompleted: event['isCompleted'],
+          difficulty: event['difficulty'],
+        );
+      }).toList();
+    });
+
+    setState(() {
+      _events = loadedEvents;
+    });
   }
 
   List<Event> _getEventsForDay(DateTime day) {
