@@ -35,14 +35,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.initState();
 
     _events = {
-      _normalizeDate(DateTime.now()): [
+      _normalizeDate(DateTime.now().add(const Duration(days: 2))): [
         Event(
           title: 'Read a book for 12 minutes',
           category: "focus",
           isCompleted: false,
         ),
       ],
-      _normalizeDate(DateTime.now().add(const Duration(days: 1))): [
+      _normalizeDate(DateTime.now().add(const Duration(days: 3))): [
         Event(title: 'Gym Session', category: "health", isCompleted: true),
       ],
     };
@@ -77,7 +77,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 final events = _getEventsForDay(day);
 
                 if (events.isEmpty) {
-                  // No events → default text
                   return Center(child: Text('${day.day}'));
                 }
 
@@ -87,14 +86,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   (event) => !event.isCompleted,
                 );
 
-                // Decide background color
-                Color bgColor;
+                Color bgColor = Colors.green;
                 if (allCompleted) {
                   bgColor = Colors.green;
                 } else if (allNotCompleted) {
                   bgColor = Colors.red;
-                } else {
-                  bgColor = Colors.orange; // mixed events
                 }
 
                 return Container(

@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
           titleTextStyle: TextStyle(color: Colors.white, fontSize: 24),
         ),
       ),
+      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: appRoutes,
     );
