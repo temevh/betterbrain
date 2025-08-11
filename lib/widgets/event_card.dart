@@ -70,6 +70,16 @@ class EventCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
+              Text(
+                event.difficulty.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: containerColor,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
               Opacity(
                 opacity: 0.7,
                 child: Text(
