@@ -35,14 +35,14 @@ class EventCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(8, 20, 8, 20),
       child: Center(
         child: Container(
+          width: 380,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(20),
-            color: containerColor,
-            border: Border.all(width: 2, color: Colors.white),
+            color: Colors.white,
             boxShadow: [
-              BoxShadow(color: Colors.black, offset: const Offset(6, 8)),
+              BoxShadow(color: containerColor, offset: const Offset(8, 10)),
             ],
           ),
           child: Column(
@@ -50,8 +50,9 @@ class EventCard extends StatelessWidget {
             children: [
               Text(
                 event.title,
-                style: const TextStyle(
-                  fontSize: 26,
+                style: TextStyle(
+                  color: containerColor,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -60,13 +61,24 @@ class EventCard extends StatelessWidget {
                 opacity: 0.7,
                 child: Text(
                   event.category.toUpperCase(),
-                  style: const TextStyle(fontSize: 18),
+                  style: TextStyle(
+                    color: containerColor,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                DateFormat('yyyy-MM-dd').format(selectedDate),
-                style: const TextStyle(fontSize: 18),
+              Opacity(
+                opacity: 0.7,
+                child: Text(
+                  DateFormat('yyyy-MM-dd').format(selectedDate),
+                  style: TextStyle(
+                    color: containerColor,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),

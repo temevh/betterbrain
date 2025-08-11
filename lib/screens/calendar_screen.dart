@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:namer_app/widgets/calendar_box.dart';
 import 'package:namer_app/widgets/event_card.dart';
 
 class Event {
   final String title;
   final bool isCompleted;
   final String category;
+  final int difficulty;
   Event({
     required this.title,
     required this.isCompleted,
     required this.category,
+    required this.difficulty,
   });
 }
 
@@ -40,10 +41,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
           title: 'Read a book for 12 minutes',
           category: "focus",
           isCompleted: false,
+          difficulty: -1,
         ),
       ],
       _normalizeDate(DateTime.now().add(const Duration(days: 3))): [
-        Event(title: 'Gym Session', category: "health", isCompleted: true),
+        Event(
+          title: 'Gym Session',
+          category: "health",
+          isCompleted: true,
+          difficulty: 1,
+        ),
       ],
     };
   }
@@ -71,7 +78,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
             },
             eventLoader: _getEventsForDay,
             calendarFormat: CalendarFormat.month,
-
             calendarBuilders: CalendarBuilders(
               defaultBuilder: (context, day, focusedDay) {
                 final events = _getEventsForDay(day);
