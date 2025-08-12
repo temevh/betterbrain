@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:math';
+import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
 class TaskBox extends StatefulWidget {
@@ -78,18 +79,14 @@ class _TaskBoxState extends State<TaskBox> {
 
   //Create the final task description/text
   _compileTask() {
-    print("##################################");
-    print(randomTask);
-    print(category);
-    print(stats);
     int statValue = getStatValue(category);
-    int minutes = statValue * 7;
-    print(minutes ?? "404");
+    int minutes =
+        statValue *
+        7; //Use a user provided "dedication" etc number instead of 7?
     String task = insertDigit(randomTask, minutes);
     setState(() {
       finalTask = task;
     });
-    print("##################################");
   }
 
   @override
@@ -107,7 +104,7 @@ class _TaskBoxState extends State<TaskBox> {
           Opacity(
             opacity: 0.5,
             child: Text(
-              '1.8.2025',
+              DateFormat("dd.MM.yyyy").format(DateTime.now()),
               style: TextStyle(color: Colors.white, fontSize: 22),
             ),
           ),
