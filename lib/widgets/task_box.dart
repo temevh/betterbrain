@@ -13,18 +13,28 @@ class TaskBox extends StatefulWidget {
 class _TaskBoxState extends State<TaskBox> {
   String randomTask = "";
   String category = "";
+  String finalTask = "";
+  List<Map<String, dynamic>> stats = [];
+  List<Map<String, dynamic>> allTasks = [];
 
   @override
   void initState() {
     super.initState();
-    _loadTasks();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    await Future.wait([_loadTasks(), _loadStats()]);
+
+    if (randomTask.isNotEmpty && stats.isNotEmpty) {
+      _compileTask();
+    }
   }
 
   Future<void> _loadTasks() async {
     final String jsonString = await rootBundle.loadString('assets/tasks.json');
     final Map<String, dynamic> jsonData = json.decode(jsonString);
 
-    final List<Map<String, dynamic>> allTasks = [];
     jsonData.forEach((category, tasks) {
       for (var task in tasks) {
         allTasks.add({"task": task["task"], "category": category});
@@ -35,14 +45,51 @@ class _TaskBoxState extends State<TaskBox> {
     final chosen = allTasks[random.nextInt(allTasks.length)];
 
     setState(() {
-      randomTask = insertDigit(chosen["task"], random);
-      category = chosen["category"] ?? "Could not set category";
+      randomTask = chosen["task"]; //Set a task to be used
+      category =
+          chosen["category"] ??
+          "Could not set category"; //set the category of the randomly selected task accordingly
     });
   }
 
-  String insertDigit(String input, Random random) {
-    String replaced = input.replaceAll('§', random.nextInt(26).toString());
+  Future<void> _loadStats() async {
+    final String jsonString = await rootBundle.loadString(
+      'assets/userdata.json',
+    );
+    final Map<String, dynamic> jsonData = json.decode(jsonString);
+    final List<dynamic> statsList = jsonData["stats"];
+    stats = statsList.map((stat) => Map<String, dynamic>.from(stat)).toList();
+  }
+
+  //replace the '§' character in the task with a digit
+  String insertDigit(String input, int minutes) {
+    String replaced = input.replaceAll('§', minutes.toString());
     return replaced;
+  }
+
+  int getStatValue(String desiredStat) {
+    for (final stat in stats) {
+      if (stat.containsKey(desiredStat)) {
+        return stat[desiredStat];
+      }
+    }
+    return 1;
+  }
+
+  //Create the final task description/text
+  _compileTask() {
+    print("##################################");
+    print(randomTask);
+    print(category);
+    print(stats);
+    int statValue = getStatValue(category);
+    int minutes = statValue * 7;
+    print(minutes ?? "404");
+    String task = insertDigit(randomTask, minutes);
+    setState(() {
+      finalTask = task;
+    });
+    print("##################################");
   }
 
   @override
@@ -68,7 +115,7 @@ class _TaskBoxState extends State<TaskBox> {
           SizedBox(
             width: 350,
             child: Text(
-              randomTask.isNotEmpty ? randomTask : "Loading task...",
+              finalTask.isNotEmpty ? finalTask : "Loading task...",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
