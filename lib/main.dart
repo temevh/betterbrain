@@ -18,10 +18,15 @@ class MyApp extends StatelessWidget {
         textTheme: ThemeData.dark().textTheme.apply(
           bodyColor: Colors.white,
           displayColor: Colors.white,
+          fontFamily: 'RobotoMono',
         ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF2B2726),
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 24),
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontFamily: 'RobotoMono',
+          ),
         ),
       ),
       debugShowCheckedModeBanner: false,
