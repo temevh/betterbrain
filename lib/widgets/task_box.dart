@@ -83,6 +83,32 @@ class _TaskBoxState extends State<TaskBox> {
     });
   }
 
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'social':
+        return Icons.people;
+      case 'health':
+        return Icons.favorite;
+      case 'productivity':
+        return Icons.work;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
+  Color _getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'social':
+        return Colors.blueAccent;
+      case 'health':
+        return Colors.green;
+      case 'productivity':
+        return Colors.orangeAccent;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -93,11 +119,12 @@ class _TaskBoxState extends State<TaskBox> {
           SizedBox(height: 340),
 
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           margin: const EdgeInsets.only(top: 30),
           decoration: BoxDecoration(
             color: const Color(0xFF3A3A3A),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black, offset: Offset(6, 8))],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,6 +134,15 @@ class _TaskBoxState extends State<TaskBox> {
                 child: Text(
                   DateFormat("dd.MM.yyyy").format(DateTime.now()),
                   style: TextStyle(color: Colors.white, fontSize: 22),
+                ),
+              ),
+              SizedBox(
+                width: 340,
+                child: Divider(
+                  thickness: 3,
+                  color: Colors.white.withOpacity(0.2),
+                  indent: 50,
+                  endIndent: 50,
                 ),
               ),
               SizedBox(height: 10),
@@ -122,14 +158,41 @@ class _TaskBoxState extends State<TaskBox> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
-              Opacity(
-                opacity: 0.5,
-                child: Text(
-                  category.isNotEmpty
-                      ? category.toUpperCase()
-                      : "Loading category...",
-                  style: TextStyle(color: Colors.white, fontSize: 22),
+              SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: _getCategoryColor(category).withOpacity(0.25),
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    color: _getCategoryColor(category).withOpacity(0.4),
+                    width: 1.5,
+                  ),
+                ),
+
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _getCategoryIcon(category),
+                      size: 20,
+                      color: _getCategoryColor(category),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      category.isNotEmpty
+                          ? category.toUpperCase()
+                          : "Loading category...",
+                      style: TextStyle(
+                        color: _getCategoryColor(category),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
