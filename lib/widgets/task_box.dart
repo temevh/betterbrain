@@ -35,9 +35,14 @@ class _TaskBoxState extends State<TaskBox> {
     final chosen = allTasks[random.nextInt(allTasks.length)];
 
     setState(() {
-      randomTask = chosen["task"] ?? "Could not set task";
+      randomTask = insertDigit(chosen["task"], random);
       category = chosen["category"] ?? "Could not set category";
     });
+  }
+
+  String insertDigit(String input, Random random) {
+    String replaced = input.replaceAll('§', random.nextInt(26).toString());
+    return replaced;
   }
 
   @override
