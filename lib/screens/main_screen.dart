@@ -32,13 +32,36 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2B2726),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: Scaffold.of(context).openDrawer,
+              icon: const Icon(Icons.menu, color: Colors.white, size: 30),
+            );
+          },
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(30, 50, 0, 0),
+          children: [
+            ListTile(
+              title: const Text('Calendar'),
+              onTap: () {
+                Navigator.pushNamed(context, '/calendar');
+              },
+            ),
+          ],
+        ),
+      ),
       backgroundColor: _completed ? Colors.green : const Color(0xFF2B2726),
       body: Center(
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
               Image.asset('assets/images/talking.png', height: 340),
               const TaskBox(),
               const SizedBox(height: 10),

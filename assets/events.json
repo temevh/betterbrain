@@ -1,0 +1,42 @@
+{
+  "2025-08-13": [
+    {
+      "title": "Read a book for 12 minutes",
+      "category": "focus",
+      "isCompleted": false,
+      "difficulty": -1
+    }
+  ],
+  "2025-08-14": [
+    {
+      "title": "Gym Session",
+      "category": "health",
+      "isCompleted": true,
+      "difficulty": 1
+    }
+  ],
+  "2025-08-15": [
+    {
+      "title": "Clean the workspace",
+      "category": "productivity",
+      "isCompleted": false,
+      "difficulty": 0
+    }
+  ],
+  "2025-08-16": [
+    {
+      "title": "Stretch for 20 minutes",
+      "category": "health",
+      "isCompleted": true,
+      "difficulty": 0
+    }
+  ],
+  "2025-08-17": [
+    {
+      "title": "Plan next week's schedule",
+      "category": "planning",
+      "isCompleted": true,
+      "difficulty": 1
+    }
+  ]
+}
