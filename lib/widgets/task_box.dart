@@ -118,7 +118,7 @@ class _TaskBoxState extends State<TaskBox> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 40,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
