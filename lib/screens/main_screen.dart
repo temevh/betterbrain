@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
-import '../buttons/failure_btn.dart';
+//import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
   final bool isCompleted;
