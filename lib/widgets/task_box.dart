@@ -87,7 +87,11 @@ class _TaskBoxState extends State<TaskBox> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Image.asset('assets/images/$category.png', height: 340),
+        if (category.isNotEmpty)
+          Image.asset('assets/images/$category.png', height: 340)
+        else
+          SizedBox(height: 340),
+
         Container(
           padding: const EdgeInsets.all(8),
           margin: const EdgeInsets.only(top: 30),
