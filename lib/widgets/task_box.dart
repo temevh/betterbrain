@@ -91,6 +91,10 @@ class _TaskBoxState extends State<TaskBox> {
         return Icons.favorite;
       case 'productivity':
         return Icons.work;
+      case 'selfCare':
+        return Icons.bathtub;
+      case 'learning':
+        return Icons.psychology;
       default:
         return Icons.help_outline;
     }
@@ -104,6 +108,10 @@ class _TaskBoxState extends State<TaskBox> {
         return Colors.green;
       case 'productivity':
         return Colors.orangeAccent;
+      case 'selfCare':
+        return Colors.red;
+      case 'learning':
+        return Colors.indigo;
       default:
         return Colors.grey;
     }
