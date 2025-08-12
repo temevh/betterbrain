@@ -1,0 +1,11 @@
+{
+  "social": [
+    { "task": "Talk to § new people" },
+    { "task": "Say hello to § strangers" },
+    { "task": "Send a message to an old friend" }
+  ],
+  "health": [
+    { "task": "Work out for § minutes" },
+    { "task": "Strech for § minutes" }
+  ]
+}

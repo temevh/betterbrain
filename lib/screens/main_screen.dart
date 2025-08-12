@@ -62,7 +62,6 @@ class _MainScreenState extends State<MainScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset('assets/images/talking.png', height: 340),
               const TaskBox(),
               const SizedBox(height: 10),
               Text(

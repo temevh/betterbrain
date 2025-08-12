@@ -30,3 +30,5 @@ flutter:
   assets:
     - assets/images/
     - assets/events.json
+    - assets/tasks.json
+    - assets/userdata.json
