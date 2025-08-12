@@ -117,7 +117,7 @@ class _TaskBoxState extends State<TaskBox> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 40,
+                    fontSize: 36,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
