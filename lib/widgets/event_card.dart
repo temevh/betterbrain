@@ -23,7 +23,20 @@ class EventCard extends StatelessWidget {
     } else if (allNotCompleted) {
       return Colors.red;
     } else {
-      return Colors.green; // Default for mixed states
+      return Colors.green;
+    }
+  }
+
+  String difficultyEmoji(int difficulty) {
+    switch (difficulty) {
+      case -1:
+        return "😓";
+      case 0:
+        return "🙂";
+      case 1:
+        return "😴";
+      default:
+        return "❓";
     }
   }
 
@@ -70,15 +83,6 @@ class EventCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                event.difficulty.toString(),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: containerColor,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
               const SizedBox(height: 8),
               Opacity(
                 opacity: 0.7,
