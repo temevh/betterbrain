@@ -64,15 +64,17 @@ class _MainScreenState extends State<MainScreen> {
             children: [
               const TaskBox(),
               const SizedBox(height: 10),
+
+              /*
               Text(
                 _completed ? "Well done!" : "Did you do it?",
                 style: TextStyle(color: Colors.white, fontSize: 28),
-              ),
+              ),*/
               const SizedBox(height: 20),
               if (!_completed) ...[
                 const SuccessBtn(),
-                const SizedBox(height: 10),
-                const FailureBtn(),
+                //const SizedBox(height: 10),
+                //const FailureBtn(),
               ],
             ],
           ),
