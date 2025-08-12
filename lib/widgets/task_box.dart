@@ -1,7 +1,44 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:math';
+import 'package:flutter/services.dart';
 
-class TaskBox extends StatelessWidget {
+class TaskBox extends StatefulWidget {
   const TaskBox({super.key});
+
+  @override
+  State<TaskBox> createState() => _TaskBoxState();
+}
+
+class _TaskBoxState extends State<TaskBox> {
+  String randomTask = "";
+  String category = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
+  Future<void> _loadTasks() async {
+    final String jsonString = await rootBundle.loadString('assets/tasks.json');
+    final Map<String, dynamic> jsonData = json.decode(jsonString);
+
+    final List<Map<String, dynamic>> allTasks = [];
+    jsonData.forEach((category, tasks) {
+      for (var task in tasks) {
+        allTasks.add({"task": task["task"], "category": category});
+      }
+    });
+
+    final random = Random();
+    final chosen = allTasks[random.nextInt(allTasks.length)];
+
+    setState(() {
+      randomTask = chosen["task"] ?? "Could not set task";
+      category = chosen["category"] ?? "Could not set category";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +51,7 @@ class TaskBox extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
+        children: [
           Opacity(
             opacity: 0.5,
             child: Text(
@@ -26,7 +63,7 @@ class TaskBox extends StatelessWidget {
           SizedBox(
             width: 350,
             child: Text(
-              'Talk to 3 new people',
+              randomTask.isNotEmpty ? randomTask : "Loading task...",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
@@ -39,7 +76,9 @@ class TaskBox extends StatelessWidget {
           Opacity(
             opacity: 0.5,
             child: Text(
-              'Social',
+              category.isNotEmpty
+                  ? category.toUpperCase()
+                  : "Loading category...",
               style: TextStyle(color: Colors.white, fontSize: 22),
             ),
           ),
