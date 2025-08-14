@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 
 class TaskBox extends StatefulWidget {
   final Map<String, dynamic>? taskData;
-  const TaskBox({super.key, this.taskData});
+  final Map<String, dynamic>? taskStat;
+  const TaskBox({super.key, this.taskData, this.taskStat});
 
   @override
   State<TaskBox> createState() => _TaskBoxState();
@@ -31,23 +32,13 @@ class _TaskBoxState extends State<TaskBox> {
     stats = statsList.map((stat) => Map<String, dynamic>.from(stat)).toList();
   }
 
-  int getStatValue(String desiredStat) {
-    for (final stat in stats) {
-      if (stat.containsKey(desiredStat)) {
-        return stat[desiredStat];
-      }
-    }
-    return 1;
-  }
-
   void _compileTask() {
     if (widget.taskData == null) return;
 
-    final String category = widget.taskData!['category'] ?? '';
     final String randomTask = widget.taskData!['task'] ?? '';
 
-    int statValue = getStatValue(category);
-    int minutes = statValue * 7; // adjust multiplier as needed
+    int minutes =
+        (widget.taskStat?['stat'] ?? 1) * 7; // adjust multiplier as needed
 
     String task = randomTask.replaceAll('§', minutes.toString());
     setState(() {

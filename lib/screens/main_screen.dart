@@ -19,6 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   final db = FirebaseFirestore.instance;
 
   Map<String, dynamic>? _currentTask;
+  Map<String, dynamic>? _currentStat;
 
   @override
   void initState() {
@@ -39,12 +40,30 @@ class _MainScreenState extends State<MainScreen> {
     final taskSnapshot = await db.collection("tasks").get();
     final tasks = taskSnapshot.docs.map((doc) => doc.data()).toList();
 
-    if (tasks.isNotEmpty) {
-      final randomTask = tasks[Random().nextInt(tasks.length)];
-      setState(() {
-        _currentTask = randomTask;
-      });
-    }
+    if (tasks.isEmpty) return;
+
+    final randomTask = tasks[Random().nextInt(tasks.length)];
+    final taskCategory = randomTask['category'];
+
+    final userEmail = "john@example.com"; //Change to use auth at some point
+    final userQuery = await db
+        .collection("users")
+        .where("email", isEqualTo: userEmail)
+        .limit(1)
+        .get();
+
+    if (userQuery.docs.isEmpty) return;
+
+    final userData = userQuery.docs.first.data();
+
+    final Map<String, dynamic> userStats = Map<String, dynamic>.from(
+      userData['stats'],
+    );
+    final categoryValue = userStats[taskCategory] ?? 1;
+    setState(() {
+      _currentTask = randomTask;
+      _currentStat = {taskCategory: categoryValue};
+    });
   }
 
   @override
@@ -81,7 +100,7 @@ class _MainScreenState extends State<MainScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (_currentTask != null && _currentTask!.isNotEmpty) ...[
-                TaskBox(taskData: _currentTask),
+                TaskBox(taskData: _currentTask, taskStat: _currentStat),
               ],
               const SizedBox(height: 10),
 
