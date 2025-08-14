@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "82640420733",
+    "project_id": "better-brain-7231d",
+    "storage_bucket": "better-brain-7231d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82640420733:android:da6ba66fe8f748874e1614",
+        "android_client_info": {
+          "package_name": "com.example.better_brain"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWUv9JPwtbRXLNIl4r2rq250YkBqAP4Jg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
