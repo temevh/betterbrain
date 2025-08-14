@@ -98,7 +98,11 @@ class _MainScreenState extends State<MainScreen> {
             ListTile(
               title: const Text('Calendar'),
               onTap: () {
-                Navigator.pushNamed(context, '/calendar');
+                Navigator.pushNamed(
+                  context,
+                  '/calendar',
+                  arguments: userEvents,
+                );
               },
             ),
           ],
