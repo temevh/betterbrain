@@ -1,31 +1,63 @@
 import 'package:flutter/material.dart';
 
-class SaveBtn extends StatelessWidget {
+class SaveBtn extends StatefulWidget {
   final VoidCallback onPressed;
 
   const SaveBtn({super.key, required this.onPressed});
 
   @override
+  State<SaveBtn> createState() => _SaveBtnState();
+}
+
+class _SaveBtnState extends State<SaveBtn> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          onPressed();
+      width: 350,
+      child: GestureDetector(
+        onTapDown: (_) {
+          setState(() => _isPressed = true);
+        },
+        onTapUp: (_) async {
+          setState(() => _isPressed = false);
+          widget.onPressed();
           Navigator.pop(context, true);
         },
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.green[800],
-          elevation: 8,
-          shadowColor: Colors.black45,
-          textStyle: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          shape: RoundedRectangleBorder(
+        onTapCancel: () {
+          setState(() => _isPressed = false);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          padding: const EdgeInsets.all(8),
+          transform: Matrix4.translationValues(
+            _isPressed ? 4 : 0, // move down when pressed
+            _isPressed ? 5 : 0,
+            0,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(255, 97, 94, 94),
+                offset: _isPressed ? const Offset(2, 3) : const Offset(8, 10),
+                blurRadius: 0,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              "Save",
+              style: const TextStyle(
+                fontSize: 32,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
-        child: const Text("Save"),
       ),
     );
   }
