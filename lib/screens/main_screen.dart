@@ -126,7 +126,7 @@ class _MainScreenState extends State<MainScreen> {
               ),*/
               const SizedBox(height: 20),
               if (!_completed) ...[
-                const SuccessBtn(),
+                SuccessBtn(taskData: _currentTask),
                 //const SizedBox(height: 10),
                 //const FailureBtn(),
               ],

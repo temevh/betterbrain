@@ -14,6 +14,20 @@ class SuccessScreen extends StatefulWidget {
 class _SuccessScreenState extends State<SuccessScreen> {
   int? selectedFeedback;
   String reflectionText = "";
+  dynamic _task;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final task =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    print(task);
+  }
 
   void _onFeedbackSelected(int feedback) {
     setState(() {
@@ -47,7 +61,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     const Text(
                       "🎉 Good job!",
                       style: TextStyle(
-                        fontSize: 40,
+                        fontSize: 44,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
