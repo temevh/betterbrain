@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
+import 'dart:math';
 //import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,10 +18,15 @@ class _MainScreenState extends State<MainScreen> {
   late bool _completed;
   final db = FirebaseFirestore.instance;
 
+  Map<String, dynamic>? _currentTask;
+  Map<String, dynamic>? _currentStat;
+  dynamic userEvents;
+
   @override
   void initState() {
     super.initState();
     _completed = widget.isCompleted;
+    _loadRandomTask();
 
     if (_completed) {
       Future.delayed(const Duration(seconds: 10), () {
@@ -29,6 +35,46 @@ class _MainScreenState extends State<MainScreen> {
         });
       });
     }
+  }
+
+  Future<void> _loadRandomTask() async {
+    final taskSnapshot = await db.collection("tasks").get();
+    final tasks = taskSnapshot.docs.map((doc) => doc.data()).toList();
+
+    if (tasks.isEmpty) return;
+
+    final randomTask = tasks[Random().nextInt(tasks.length)];
+    final taskCategory = randomTask['category'];
+
+    final userEmail = "john@example.com"; //Change to use auth at some point
+    final userQuery = await db
+        .collection("users")
+        .where("email", isEqualTo: userEmail)
+        .limit(1)
+        .get();
+
+    if (userQuery.docs.isEmpty) return;
+
+    final userDoc = userQuery.docs.first;
+    final userData = userDoc.data();
+
+    final Map<String, dynamic> userStats = Map<String, dynamic>.from(
+      userData['stats'],
+    );
+    final categoryValue = userStats[taskCategory] ?? 1;
+    setState(() {
+      _currentTask = randomTask;
+      _currentStat = {taskCategory: categoryValue};
+    });
+
+    final eventsSnapshot = await db
+        .collection("users")
+        .doc(userDoc.id)
+        .collection('calendar')
+        .get();
+
+    userEvents = eventsSnapshot.docs.map((doc) => doc.data()).toList();
+    print(userEvents);
   }
 
   @override
@@ -64,7 +110,9 @@ class _MainScreenState extends State<MainScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const TaskBox(),
+              if (_currentTask != null && _currentTask!.isNotEmpty) ...[
+                TaskBox(taskData: _currentTask, taskStat: _currentStat),
+              ],
               const SizedBox(height: 10),
 
               /*
