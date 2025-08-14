@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
+import 'dart:math';
 //import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,16 +18,31 @@ class _MainScreenState extends State<MainScreen> {
   late bool _completed;
   final db = FirebaseFirestore.instance;
 
+  Map<String, dynamic>? _currentTask;
+
   @override
   void initState() {
     super.initState();
     _completed = widget.isCompleted;
+    _loadRandomTask();
 
     if (_completed) {
       Future.delayed(const Duration(seconds: 10), () {
         setState(() {
           _completed = false;
         });
+      });
+    }
+  }
+
+  Future<void> _loadRandomTask() async {
+    final taskSnapshot = await db.collection("tasks").get();
+    final tasks = taskSnapshot.docs.map((doc) => doc.data()).toList();
+
+    if (tasks.isNotEmpty) {
+      final randomTask = tasks[Random().nextInt(tasks.length)];
+      setState(() {
+        _currentTask = randomTask;
       });
     }
   }
@@ -64,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const TaskBox(),
+              TaskBox(task: _currentTask?['task'] ?? 'Loading...'),
               const SizedBox(height: 10),
 
               /*

@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
 class TaskBox extends StatefulWidget {
-  const TaskBox({super.key});
+  final String task;
+  const TaskBox({super.key, this.task = 'No task yet'});
 
   @override
   State<TaskBox> createState() => _TaskBoxState();
@@ -21,36 +22,6 @@ class _TaskBoxState extends State<TaskBox> {
   @override
   void initState() {
     super.initState();
-    _initData();
-  }
-
-  Future<void> _initData() async {
-    await Future.wait([_loadTasks(), _loadStats()]);
-
-    if (randomTask.isNotEmpty && stats.isNotEmpty) {
-      _compileTask();
-    }
-  }
-
-  Future<void> _loadTasks() async {
-    final String jsonString = await rootBundle.loadString('assets/tasks.json');
-    final Map<String, dynamic> jsonData = json.decode(jsonString);
-
-    jsonData.forEach((category, tasks) {
-      for (var task in tasks) {
-        allTasks.add({"task": task["task"], "category": category});
-      }
-    });
-
-    final random = Random();
-    final chosen = allTasks[random.nextInt(allTasks.length)];
-
-    setState(() {
-      randomTask = chosen["task"]; //Set a task to be used
-      category =
-          chosen["category"] ??
-          "Could not set category"; //set the category of the randomly selected task accordingly
-    });
   }
 
   Future<void> _loadStats() async {
@@ -157,7 +128,7 @@ class _TaskBoxState extends State<TaskBox> {
               SizedBox(
                 width: 350,
                 child: Text(
-                  finalTask.isNotEmpty ? finalTask : "Loading task...",
+                  widget.task,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
