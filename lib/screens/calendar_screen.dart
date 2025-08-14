@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:namer_app/widgets/event_card.dart';
@@ -5,15 +6,17 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class Event {
-  final String title;
-  final bool isCompleted;
   final String category;
+  final DateTime date;
   final int difficulty;
+  final bool isCompleted;
+  final String title;
   Event({
-    required this.title,
-    required this.isCompleted,
     required this.category,
+    required this.date,
     required this.difficulty,
+    required this.isCompleted,
+    required this.title,
   });
 }
 
@@ -27,8 +30,7 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  Map? userEvents;
-  late Map<DateTime, List<Event>> _events = {};
+  dynamic _events;
 
   DateTime _normalizeDate(DateTime date) =>
       DateTime(date.year, date.month, date.day);
@@ -36,40 +38,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-    _events = {};
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (userEvents == null) {
-      userEvents = ModalRoute.of(context)!.settings.arguments as Map?;
-      _setEvents();
-    }
+    final userEvents = ModalRoute.of(context)!.settings.arguments as List?;
+    _setEvents(userEvents ?? []);
   }
 
-  Future<void> _setEvents() async {
-    print("################");
-    print(userEvents);
-    final String jsonString = await rootBundle.loadString('assets/events.json');
-    final Map<String, dynamic> jsonData = json.decode(jsonString);
+  Future<void> _setEvents(List userEvents) async {
+    // Temporary map to hold events grouped by normalized date
+    final Map<DateTime, List<Event>> eventsMap = {};
 
-    final Map<DateTime, List<Event>> loadedEvents = {};
+    for (var e in userEvents) {
+      final data = e['event'] as Map<String, dynamic>;
 
-    jsonData.forEach((dateString, eventList) {
-      DateTime date = DateTime.parse(dateString);
-      loadedEvents[_normalizeDate(date)] = (eventList as List).map((event) {
-        return Event(
-          title: event['title'],
-          category: event['category'],
-          isCompleted: event['isCompleted'],
-          difficulty: event['difficulty'],
-        );
-      }).toList();
-    });
+      final event = Event(
+        category: data['category'] ?? '',
+        date: (data['date'] as Timestamp).toDate(),
+        difficulty: data['difficulty'] ?? 0,
+        isCompleted: data['isCompleted'] ?? false,
+        title: data['title'] ?? '',
+      );
+
+      final dayKey = _normalizeDate(event.date);
+      eventsMap.putIfAbsent(dayKey, () => []).add(event);
+    }
 
     setState(() {
-      _events = loadedEvents;
+      _events = eventsMap; // Map<DateTime, List<Event>>
     });
   }
 

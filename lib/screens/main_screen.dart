@@ -101,7 +101,7 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pushNamed(
                   context,
                   '/calendar',
-                  arguments: {'userevents': userEvents},
+                  arguments: userEvents,
                 );
               },
             ),
