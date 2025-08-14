@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
 //import '../buttons/failure_btn.dart';
@@ -14,6 +15,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late bool _completed;
+  final db = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -75,6 +77,16 @@ class _MainScreenState extends State<MainScreen> {
                 const SuccessBtn(),
                 //const SizedBox(height: 10),
                 //const FailureBtn(),
+                ElevatedButton(
+                  onPressed: () async {
+                    await db.collection("users").get().then((event) {
+                      for (var doc in event.docs) {
+                        print("${doc.id} => ${doc.data()}");
+                      }
+                    });
+                  },
+                  child: Text("Fetch"),
+                ),
               ],
             ],
           ),
