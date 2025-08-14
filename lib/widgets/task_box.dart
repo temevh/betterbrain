@@ -19,17 +19,7 @@ class _TaskBoxState extends State<TaskBox> {
   @override
   void initState() {
     super.initState();
-    _loadStats();
     _compileTask(); // compile the task text based on stats
-  }
-
-  Future<void> _loadStats() async {
-    final String jsonString = await rootBundle.loadString(
-      'assets/userdata.json',
-    );
-    final Map<String, dynamic> jsonData = json.decode(jsonString);
-    final List<dynamic> statsList = jsonData["stats"];
-    stats = statsList.map((stat) => Map<String, dynamic>.from(stat)).toList();
   }
 
   void _compileTask() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:namer_app/screens/calendar_screen.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
 import 'dart:math';
@@ -20,6 +21,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Map<String, dynamic>? _currentTask;
   Map<String, dynamic>? _currentStat;
+  dynamic userEvents;
 
   @override
   void initState() {
@@ -54,7 +56,8 @@ class _MainScreenState extends State<MainScreen> {
 
     if (userQuery.docs.isEmpty) return;
 
-    final userData = userQuery.docs.first.data();
+    final userDoc = userQuery.docs.first;
+    final userData = userDoc.data();
 
     final Map<String, dynamic> userStats = Map<String, dynamic>.from(
       userData['stats'],
@@ -64,6 +67,15 @@ class _MainScreenState extends State<MainScreen> {
       _currentTask = randomTask;
       _currentStat = {taskCategory: categoryValue};
     });
+
+    final eventsSnapshot = await db
+        .collection("users")
+        .doc(userDoc.id)
+        .collection('calendar')
+        .get();
+
+    userEvents = eventsSnapshot.docs.map((doc) => doc.data()).toList();
+    print(userEvents);
   }
 
   @override
