@@ -27,19 +27,30 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  Map? userEvents;
+  late Map<DateTime, List<Event>> _events = {};
 
   DateTime _normalizeDate(DateTime date) =>
       DateTime(date.year, date.month, date.day);
 
-  late Map<DateTime, List<Event>> _events = {};
-
   @override
   void initState() {
     super.initState();
-    _loadEvents();
+    _events = {};
   }
 
-  Future<void> _loadEvents() async {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (userEvents == null) {
+      userEvents = ModalRoute.of(context)!.settings.arguments as Map?;
+      _setEvents();
+    }
+  }
+
+  Future<void> _setEvents() async {
+    print("################");
+    print(userEvents);
     final String jsonString = await rootBundle.loadString('assets/events.json');
     final Map<String, dynamic> jsonData = json.decode(jsonString);
 
