@@ -80,7 +80,9 @@ class _MainScreenState extends State<MainScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TaskBox(task: _currentTask?['task'] ?? 'Loading...'),
+              if (_currentTask != null && _currentTask!.isNotEmpty) ...[
+                TaskBox(taskData: _currentTask),
+              ],
               const SizedBox(height: 10),
 
               /*

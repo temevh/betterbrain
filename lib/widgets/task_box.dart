@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
 class TaskBox extends StatefulWidget {
-  final String task;
-  const TaskBox({super.key, this.task = 'No task yet'});
+  final Map<String, dynamic>? taskData;
+  const TaskBox({super.key, this.taskData});
 
   @override
   State<TaskBox> createState() => _TaskBoxState();
 }
 
 class _TaskBoxState extends State<TaskBox> {
-  String randomTask = "";
-  String category = "";
   String finalTask = "";
   List<Map<String, dynamic>> stats = [];
-  List<Map<String, dynamic>> allTasks = [];
 
   @override
   void initState() {
     super.initState();
+    _loadStats();
+    _compileTask(); // compile the task text based on stats
   }
 
   Future<void> _loadStats() async {
@@ -42,12 +40,15 @@ class _TaskBoxState extends State<TaskBox> {
     return 1;
   }
 
-  //Create the final task description/text
-  _compileTask() {
+  void _compileTask() {
+    if (widget.taskData == null) return;
+
+    final String category = widget.taskData!['category'] ?? '';
+    final String randomTask = widget.taskData!['task'] ?? '';
+
     int statValue = getStatValue(category);
-    int minutes =
-        statValue *
-        7; //Use a user provided "dedication" etc number instead of 7?
+    int minutes = statValue * 7; // adjust multiplier as needed
+
     String task = randomTask.replaceAll('§', minutes.toString());
     setState(() {
       finalTask = task;
@@ -90,20 +91,23 @@ class _TaskBoxState extends State<TaskBox> {
 
   @override
   Widget build(BuildContext context) {
+    final category = widget.taskData?['category'] ?? '';
+
     return Column(
       children: [
         if (category.isNotEmpty)
           Image.asset('assets/images/$category.png', height: 280)
         else
-          SizedBox(height: 340),
-
+          const SizedBox(height: 340),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           margin: const EdgeInsets.only(top: 30),
           decoration: BoxDecoration(
             color: const Color(0xFF3A3A3A),
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: Colors.black, offset: Offset(6, 8))],
+            boxShadow: const [
+              BoxShadow(color: Colors.black, offset: Offset(6, 8)),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,7 +116,7 @@ class _TaskBoxState extends State<TaskBox> {
                 opacity: 0.5,
                 child: Text(
                   DateFormat("dd.MM.yyyy").format(DateTime.now()),
-                  style: TextStyle(color: Colors.white, fontSize: 22),
+                  style: const TextStyle(color: Colors.white, fontSize: 22),
                 ),
               ),
               SizedBox(
@@ -124,20 +128,20 @@ class _TaskBoxState extends State<TaskBox> {
                   endIndent: 50,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               SizedBox(
                 width: 350,
                 child: Text(
-                  widget.task,
+                  finalTask.isNotEmpty ? finalTask : "Loading...",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -151,7 +155,6 @@ class _TaskBoxState extends State<TaskBox> {
                     width: 1.5,
                   ),
                 ),
-
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -162,9 +165,7 @@ class _TaskBoxState extends State<TaskBox> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      category.isNotEmpty
-                          ? category.toUpperCase()
-                          : "Loading category...",
+                      category,
                       style: TextStyle(
                         color: _getCategoryColor(category),
                         fontSize: 18,
