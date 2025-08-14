@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:namer_app/screens/calendar_screen.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
 import 'dart:math';
