@@ -91,7 +91,7 @@ class _TaskBoxState extends State<TaskBox> {
         return Icons.favorite;
       case 'productivity':
         return Icons.work;
-      case 'selfCare':
+      case 'selfcare':
         return Icons.bathtub;
       case 'learning':
         return Icons.psychology;
@@ -108,7 +108,7 @@ class _TaskBoxState extends State<TaskBox> {
         return Colors.green;
       case 'productivity':
         return Colors.orangeAccent;
-      case 'selfCare':
+      case 'selfcare':
         return Colors.red;
       case 'learning':
         return Colors.indigo;
@@ -122,7 +122,7 @@ class _TaskBoxState extends State<TaskBox> {
     return Column(
       children: [
         if (category.isNotEmpty)
-          Image.asset('assets/images/$category.png', height: 340)
+          Image.asset('assets/images/$category.png', height: 280)
         else
           SizedBox(height: 340),
 

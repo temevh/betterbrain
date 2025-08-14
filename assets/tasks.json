@@ -22,7 +22,7 @@
     { "task": "Read for § minutes" },
     { "task": "Learn § new words" }
   ],
-  "selfCare": [
+  "selfcare": [
     { "task": "Write down § things you are grateful for" },
     { "task": "Take a break for § minutes" },
     { "task": "Listen to music for § minutes" },
