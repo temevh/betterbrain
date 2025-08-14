@@ -77,16 +77,6 @@ class _MainScreenState extends State<MainScreen> {
                 const SuccessBtn(),
                 //const SizedBox(height: 10),
                 //const FailureBtn(),
-                ElevatedButton(
-                  onPressed: () async {
-                    await db.collection("users").get().then((event) {
-                      for (var doc in event.docs) {
-                        print("${doc.id} => ${doc.data()}");
-                      }
-                    });
-                  },
-                  child: Text("Fetch"),
-                ),
               ],
             ],
           ),
