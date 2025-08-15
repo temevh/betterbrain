@@ -46,15 +46,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Future<void> _setEvents(List userEvents) async {
-    // Temporary map to hold events grouped by normalized date
     final Map<DateTime, List<Event>> eventsMap = {};
 
     for (var e in userEvents) {
-      final data = e['event'] as Map<String, dynamic>;
+      final data = Map<String, dynamic>.from(e);
+
+      // Convert Firestore Timestamp to DateTime
+      final DateTime dateTime = data['date'] is Timestamp
+          ? (data['date'] as Timestamp).toDate()
+          : DateTime.tryParse(data['date'].toString()) ?? DateTime.now();
 
       final event = Event(
         category: data['category'] ?? '',
-        date: (data['date'] as Timestamp).toDate(),
+        date: dateTime,
         difficulty: data['difficulty'] ?? 0,
         isCompleted: data['isCompleted'] ?? false,
         title: data['title'] ?? '',
@@ -65,7 +69,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
 
     setState(() {
-      _events = eventsMap; // Map<DateTime, List<Event>>
+      _events = eventsMap;
     });
   }
 
