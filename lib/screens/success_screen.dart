@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/widgets/feedback_row.dart';
 import 'package:namer_app/widgets/reflection.dart';
 import 'package:namer_app/buttons/save_btn.dart';
+import 'package:namer_app/utils/category_utils.dart';
 
 class SuccessScreen extends StatefulWidget {
   final Map<String, dynamic>? taskData;
@@ -36,40 +37,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
   void _onSavePressed() {
     print("User feedback selection: $selectedFeedback");
     print("User reflection text: $reflectionText");
-  }
-
-  IconData _getCategoryIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'social':
-        return Icons.people;
-      case 'health':
-        return Icons.favorite;
-      case 'productivity':
-        return Icons.work;
-      case 'selfcare':
-        return Icons.bathtub;
-      case 'learning':
-        return Icons.psychology;
-      default:
-        return Icons.help_outline;
-    }
-  }
-
-  Color _getCategoryColor(String category) {
-    switch (category.toLowerCase()) {
-      case 'social':
-        return Colors.blueAccent;
-      case 'health':
-        return Colors.green;
-      case 'productivity':
-        return Colors.orangeAccent;
-      case 'selfcare':
-        return Colors.red;
-      case 'learning':
-        return Colors.indigo;
-      default:
-        return Colors.grey;
-    }
   }
 
   @override
@@ -143,10 +110,10 @@ class _SuccessScreenState extends State<SuccessScreen> {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: _getCategoryColor(category).withOpacity(0.25),
+                          color: getCategoryColor(category).withOpacity(0.25),
                           borderRadius: BorderRadius.circular(50),
                           border: Border.all(
-                            color: _getCategoryColor(category).withOpacity(0.4),
+                            color: getCategoryColor(category).withOpacity(0.4),
                             width: 1.5,
                           ),
                         ),
@@ -154,15 +121,15 @@ class _SuccessScreenState extends State<SuccessScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              _getCategoryIcon(category),
+                              getCategoryIcon(category),
                               size: 20,
-                              color: _getCategoryColor(category),
+                              color: getCategoryColor(category),
                             ),
                             const SizedBox(width: 6),
                             Text(
                               category,
                               style: TextStyle(
-                                color: _getCategoryColor(category),
+                                color: getCategoryColor(category),
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
