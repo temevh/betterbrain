@@ -14,10 +14,13 @@ class FeedbackRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          "How did the task feel?",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        Opacity(
+          opacity: 0.8,
+          child: const Text(
+            "How did the task feel?",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
         ),
         const SizedBox(height: 16),
         Row(
@@ -87,7 +90,7 @@ class _FeedbackButton extends StatelessWidget {
                   ? Border.all(color: Colors.greenAccent, width: 3)
                   : null,
             ),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(10),
             child: Text(emoji, style: const TextStyle(fontSize: 36)),
           ),
         ),

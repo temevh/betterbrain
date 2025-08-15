@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:namer_app/widgets/feedback_row.dart';
 import 'package:namer_app/widgets/reflection.dart';
@@ -136,7 +134,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 30),
                     Opacity(
                       opacity: 0.8,
                       child: Container(

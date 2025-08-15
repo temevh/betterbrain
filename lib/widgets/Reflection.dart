@@ -14,8 +14,14 @@ class _ReflectionState extends State<Reflection> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text("Optional reflection", style: TextStyle(fontSize: 22)),
-
+        Opacity(
+          opacity: 0.8,
+          child: const Text(
+            "Optional reflection",
+            style: TextStyle(fontSize: 22),
+          ),
+        ),
+        SizedBox(height: 10),
         Center(
           child: Container(
             width: 350,
@@ -34,7 +40,7 @@ class _ReflectionState extends State<Reflection> {
               maxLines: 4,
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                hintText: "Write your reflection here...",
+                hintText: "📝 Write your reflection here...",
                 contentPadding: EdgeInsets.all(12),
               ),
               onChanged: widget.onChanged,
