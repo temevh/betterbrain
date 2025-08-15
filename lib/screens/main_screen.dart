@@ -18,6 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   late bool _completed;
   final db = FirebaseFirestore.instance;
   late dynamic pastEvents;
+  dynamic userData;
 
   Map<String, dynamic>? _currentTask;
   String randomTask = "";
@@ -38,6 +39,8 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  String? _userId;
+
   Future<void> _loadRandomTask() async {
     final tasks = await getAllTasks();
     final selectedTask = getRandomTask(tasks);
@@ -45,8 +48,9 @@ class _MainScreenState extends State<MainScreen> {
 
     final userEmail = "john@example.com";
     final userData = await getUserByEmail(userEmail);
-    // ignore: unnecessary_null_comparison
     if (userData == null) return;
+
+    _userId = userData['id']; // store for later
 
     final taskCategory = selectedTask['category'];
     final userStats = Map<String, dynamic>.from(userData['stats']);
@@ -58,8 +62,6 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _currentTask = {"task": compiledTask, "category": taskCategory};
     });
-
-    pastEvents = getUserEvents(userData['id']);
   }
 
   @override
@@ -82,12 +84,13 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             ListTile(
               title: const Text('Calendar'),
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/calendar',
-                  arguments: pastEvents,
-                );
+              onTap: () async {
+                if (_userId != null) {
+                  final events = await getUserEvents(_userId!);
+                  Navigator.pushNamed(context, '/calendar', arguments: events);
+                } else {
+                  print("User ID not loaded yet");
+                }
               },
             ),
           ],
