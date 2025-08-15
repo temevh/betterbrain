@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../screens/main_screen.dart';
 
 class SuccessBtn extends StatefulWidget {
-  const SuccessBtn({super.key});
+  final Map<String, dynamic>? taskData;
+  const SuccessBtn({super.key, this.taskData});
 
   @override
   State<SuccessBtn> createState() => _SuccessBtnState();
@@ -22,7 +23,11 @@ class _SuccessBtnState extends State<SuccessBtn> {
         onTapUp: (_) async {
           setState(() => _isPressed = false);
 
-          final result = await Navigator.pushNamed(context, '/success');
+          final result = await Navigator.pushNamed(
+            context,
+            '/success',
+            arguments: widget.taskData,
+          );
 
           if (result == true) {
             Navigator.pushReplacement(
@@ -35,6 +40,7 @@ class _SuccessBtnState extends State<SuccessBtn> {
         },
         onTapCancel: () {
           setState(() => _isPressed = false);
+          print(widget.taskData);
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),

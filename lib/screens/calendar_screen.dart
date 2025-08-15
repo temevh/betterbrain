@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:namer_app/widgets/event_card.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart';
 
 class Event {
   final String category;
