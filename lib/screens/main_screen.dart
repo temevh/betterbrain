@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   final db = FirebaseFirestore.instance;
 
   Map<String, dynamic>? _currentTask;
-  Map<String, dynamic>? _currentStat;
+  String randomTask = "";
   dynamic userEvents;
 
   @override
@@ -43,10 +43,12 @@ class _MainScreenState extends State<MainScreen> {
 
     if (tasks.isEmpty) return;
 
-    final randomTask = tasks[Random().nextInt(tasks.length)];
-    final taskCategory = randomTask['category'];
+    final selectedTask = tasks[Random().nextInt(tasks.length)];
+    print("selected task $selectedTask");
+    final taskCategory = selectedTask['category'];
+    print("task category $taskCategory");
 
-    final userEmail = "john@example.com"; //Change to use auth at some point
+    final userEmail = "john@example.com"; // TODO: replace with auth
     final userQuery = await db
         .collection("users")
         .where("email", isEqualTo: userEmail)
@@ -61,10 +63,16 @@ class _MainScreenState extends State<MainScreen> {
     final Map<String, dynamic> userStats = Map<String, dynamic>.from(
       userData['stats'],
     );
-    final categoryValue = userStats[taskCategory] ?? 1;
+    final userStat = userStats[taskCategory] ?? 1;
+
+    final String templateTask = selectedTask!['task'] ?? '';
+    final String category = selectedTask!['category'];
+
+    int minutes = userStat * 7; // Adjust multiplier as needed
+    String compiledTask = templateTask.replaceAll('§', minutes.toString());
+
     setState(() {
-      _currentTask = randomTask;
-      _currentStat = {taskCategory: categoryValue};
+      _currentTask = {"task": compiledTask, "category": category};
     });
 
     final eventsSnapshot = await db
@@ -74,7 +82,6 @@ class _MainScreenState extends State<MainScreen> {
         .get();
 
     userEvents = eventsSnapshot.docs.map((doc) => doc.data()).toList();
-    print(userEvents);
   }
 
   @override
@@ -115,21 +122,11 @@ class _MainScreenState extends State<MainScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (_currentTask != null && _currentTask!.isNotEmpty) ...[
-                TaskBox(taskData: _currentTask, taskStat: _currentStat),
+                TaskBox(taskData: _currentTask),
               ],
               const SizedBox(height: 10),
-
-              /*
-              Text(
-                _completed ? "Well done!" : "Did you do it?",
-                style: TextStyle(color: Colors.white, fontSize: 28),
-              ),*/
               const SizedBox(height: 20),
-              if (!_completed) ...[
-                SuccessBtn(taskData: _currentTask),
-                //const SizedBox(height: 10),
-                //const FailureBtn(),
-              ],
+              if (!_completed) ...[SuccessBtn(taskData: _currentTask)],
             ],
           ),
         ),

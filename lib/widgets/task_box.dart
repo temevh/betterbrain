@@ -4,8 +4,7 @@ import 'package:flutter/services.dart';
 
 class TaskBox extends StatefulWidget {
   final Map<String, dynamic>? taskData;
-  final Map<String, dynamic>? taskStat;
-  const TaskBox({super.key, this.taskData, this.taskStat});
+  const TaskBox({super.key, this.taskData});
 
   @override
   State<TaskBox> createState() => _TaskBoxState();
@@ -18,21 +17,8 @@ class _TaskBoxState extends State<TaskBox> {
   @override
   void initState() {
     super.initState();
-    _compileTask(); // compile the task text based on stats
-  }
-
-  void _compileTask() {
-    if (widget.taskData == null) return;
-
-    final String randomTask = widget.taskData!['task'] ?? '';
-
-    int minutes =
-        (widget.taskStat?['stat'] ?? 1) * 7; // adjust multiplier as needed
-
-    String task = randomTask.replaceAll('§', minutes.toString());
-    setState(() {
-      finalTask = task;
-    });
+    print("################");
+    print(widget.taskData);
   }
 
   IconData _getCategoryIcon(String category) {
@@ -112,7 +98,7 @@ class _TaskBoxState extends State<TaskBox> {
               SizedBox(
                 width: 350,
                 child: Text(
-                  finalTask.isNotEmpty ? finalTask : "Loading...",
+                  widget.taskData?['task'],
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white,
