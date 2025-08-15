@@ -3,6 +3,7 @@ import 'package:namer_app/widgets/feedback_row.dart';
 import 'package:namer_app/widgets/reflection.dart';
 import 'package:namer_app/buttons/save_btn.dart';
 import 'package:namer_app/utils/category_utils.dart';
+import 'package:namer_app/services/database_service.dart';
 
 class SuccessScreen extends StatefulWidget {
   final Map<String, dynamic>? taskData;
@@ -35,8 +36,15 @@ class _SuccessScreenState extends State<SuccessScreen> {
   }
 
   void _onSavePressed() {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     print("User feedback selection: $selectedFeedback");
     print("User reflection text: $reflectionText");
+    if (args != null) {
+      saveTask(args, "5QY7xynBreMil6jwDd9h", selectedFeedback, reflectionText);
+    } else {
+      print("No task data to save");
+    }
   }
 
   @override

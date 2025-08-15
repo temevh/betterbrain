@@ -38,6 +38,7 @@ class _ReflectionState extends State<Reflection> {
             ),
             child: TextField(
               maxLines: 4,
+              style: TextStyle(color: Colors.black),
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: "📝 Write your reflection here...",

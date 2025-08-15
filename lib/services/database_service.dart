@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
@@ -43,4 +44,34 @@ Future<List<Map<String, dynamic>>> getUserEvents(String userId) async {
       .collection("calendar")
       .get();
   return eventSnapshot.docs.map((doc) => doc.data()).toList();
+}
+
+//Save completed task for user
+Future<bool> saveTask(
+  Map<String, dynamic>? event,
+  String userId,
+  int? difficultyArg,
+  String feedbackArg,
+) async {
+  try {
+    final eventObject = {
+      'category': event?['category'],
+      'title': event?['task'],
+      'isCompleted': true,
+      'difficulty': difficultyArg,
+      'feedback': feedbackArg,
+      'date': DateTime.now(),
+    };
+
+    await db
+        .collection("users")
+        .doc(userId)
+        .collection("calendar")
+        .add(eventObject);
+    print("Saved event for $userId");
+    return true;
+  } catch (e) {
+    print("Error saving event: $e");
+    return false;
+  }
 }
