@@ -17,7 +17,7 @@ class FeedbackRow extends StatelessWidget {
         const Text(
           "How did the task feel?",
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 30),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Row(

@@ -65,8 +65,8 @@ class _MainScreenState extends State<MainScreen> {
     );
     final userStat = userStats[taskCategory] ?? 1;
 
-    final String templateTask = selectedTask!['task'] ?? '';
-    final String category = selectedTask!['category'];
+    final String templateTask = selectedTask['task'] ?? '';
+    final String category = selectedTask['category'];
 
     int minutes = userStat * 7; // Adjust multiplier as needed
     String compiledTask = templateTask.replaceAll('§', minutes.toString());

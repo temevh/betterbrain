@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/widgets/feedback_row.dart';
 import 'package:namer_app/widgets/reflection.dart';
 import 'package:namer_app/buttons/save_btn.dart';
-import 'package:namer_app/widgets/task_reflection.dart';
 
 class SuccessScreen extends StatefulWidget {
-  const SuccessScreen({super.key});
+  final Map<String, dynamic>? taskData;
+  const SuccessScreen({super.key, this.taskData});
 
   @override
   State<SuccessScreen> createState() => _SuccessScreenState();
@@ -14,19 +14,11 @@ class SuccessScreen extends StatefulWidget {
 class _SuccessScreenState extends State<SuccessScreen> {
   int? selectedFeedback;
   String reflectionText = "";
-  dynamic _task;
+  dynamic task = {};
 
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final task =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-    print(task);
   }
 
   void _onFeedbackSelected(int feedback) {
@@ -46,8 +38,47 @@ class _SuccessScreenState extends State<SuccessScreen> {
     print("User reflection text: $reflectionText");
   }
 
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'social':
+        return Icons.people;
+      case 'health':
+        return Icons.favorite;
+      case 'productivity':
+        return Icons.work;
+      case 'selfcare':
+        return Icons.bathtub;
+      case 'learning':
+        return Icons.psychology;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
+  Color _getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'social':
+        return Colors.blueAccent;
+      case 'health':
+        return Colors.green;
+      case 'productivity':
+        return Colors.orangeAccent;
+      case 'selfcare':
+        return Colors.red;
+      case 'learning':
+        return Colors.indigo;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    final task = args?['task'] ?? 'Unknown task';
+    final category = args?['category'] ?? 'Unknown category';
+
     return Scaffold(
       backgroundColor: Colors.green,
       body: SafeArea(
@@ -66,7 +97,61 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       ),
                     ),
                     const SizedBox(height: 40),
-                    TaskReflection(),
+                    Column(
+                      children: [
+                        const Text(
+                          "Todays task was:",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Text(
+                          task,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _getCategoryColor(
+                              category,
+                            ).withOpacity(0.25),
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(
+                              color: _getCategoryColor(
+                                category,
+                              ).withOpacity(0.4),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                _getCategoryIcon(category),
+                                size: 20,
+                                color: _getCategoryColor(category),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                category,
+                                style: TextStyle(
+                                  color: _getCategoryColor(category),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 40),
 
                     FeedbackRow(

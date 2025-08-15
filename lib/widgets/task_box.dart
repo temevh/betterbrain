@@ -17,8 +17,6 @@ class _TaskBoxState extends State<TaskBox> {
   @override
   void initState() {
     super.initState();
-    print("################");
-    print(widget.taskData);
   }
 
   IconData _getCategoryIcon(String category) {
@@ -58,6 +56,7 @@ class _TaskBoxState extends State<TaskBox> {
   @override
   Widget build(BuildContext context) {
     final category = widget.taskData?['category'] ?? '';
+    final task = widget.taskData?['task'] ?? 'No task found :/';
 
     return Column(
       children: [
@@ -98,7 +97,7 @@ class _TaskBoxState extends State<TaskBox> {
               SizedBox(
                 width: 350,
                 child: Text(
-                  widget.taskData?['task'],
+                  task,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white,

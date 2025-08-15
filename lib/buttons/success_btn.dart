@@ -40,6 +40,7 @@ class _SuccessBtnState extends State<SuccessBtn> {
         },
         onTapCancel: () {
           setState(() => _isPressed = false);
+          print(widget.taskData);
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),
