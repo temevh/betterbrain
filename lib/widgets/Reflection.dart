@@ -17,21 +17,27 @@ class _ReflectionState extends State<Reflection> {
         const Text("Optional reflection", style: TextStyle(fontSize: 22)),
 
         Center(
-          child: SizedBox(
-            width: 300, // adjust width to make it narrower
-            child: TextField(
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16), // rounded corners
+          child: Container(
+            width: 350,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6,
+                  offset: Offset(0, 2),
                 ),
-                hintText: 'Write your reflection here...',
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              style: TextStyle(color: Colors.black),
-              onChanged: widget.onChanged,
+              ],
+            ),
+            child: TextField(
               maxLines: 4,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: "Write your reflection here...",
+                contentPadding: EdgeInsets.all(12),
+              ),
+              onChanged: widget.onChanged,
             ),
           ),
         ),

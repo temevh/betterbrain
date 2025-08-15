@@ -73,21 +73,25 @@ class _FeedbackButton extends StatelessWidget {
     return Column(
       children: [
         GestureDetector(
-          onTap: () {
-            onPressed(feedbackValue);
-          },
-          child: CircleAvatar(
-            radius: 40,
-            backgroundColor: isSelected ? Colors.white : Colors.grey[800],
-            child: Text(
-              emoji,
-              style: TextStyle(
-                fontSize: 36,
-                color: isSelected ? Colors.green[800] : Colors.white,
-              ),
+          onTap: () => onPressed(feedbackValue),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOutBack,
+            transform: Matrix4.identity()..scale(isSelected ? 1.1 : 1.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected
+                  ? Colors.greenAccent.withOpacity(0.2)
+                  : Colors.grey[900],
+              border: isSelected
+                  ? Border.all(color: Colors.greenAccent, width: 3)
+                  : null,
             ),
+            padding: const EdgeInsets.all(16),
+            child: Text(emoji, style: const TextStyle(fontSize: 36)),
           ),
         ),
+
         const SizedBox(height: 6),
         Text(
           label,

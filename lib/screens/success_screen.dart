@@ -97,6 +97,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    /* 
                     Opacity(
                       opacity: 0.6,
                       child: const Text(
@@ -104,12 +105,19 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 20),
                       ),
-                    ),
+                    ),*/
                     SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.green,
                         borderRadius: BorderRadius.all(Radius.circular(12)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blueGrey,
+                            offset: const Offset(8, 10),
+                            blurRadius: 0,
+                          ),
+                        ],
                       ),
                       width: 350,
                       child: Column(
@@ -129,37 +137,40 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _getCategoryColor(category).withOpacity(0.25),
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(
-                          color: _getCategoryColor(category).withOpacity(0.4),
-                          width: 1.5,
+                    Opacity(
+                      opacity: 0.8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
                         ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            _getCategoryIcon(category),
-                            size: 20,
-                            color: _getCategoryColor(category),
+                        decoration: BoxDecoration(
+                          color: _getCategoryColor(category).withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
+                            color: _getCategoryColor(category).withOpacity(0.4),
+                            width: 1.5,
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            category,
-                            style: TextStyle(
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _getCategoryIcon(category),
+                              size: 20,
                               color: _getCategoryColor(category),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 6),
+                            Text(
+                              category,
+                              style: TextStyle(
+                                color: _getCategoryColor(category),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -168,7 +179,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       selectedFeedback: selectedFeedback,
                       onFeedbackSelected: _onFeedbackSelected,
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
                     Reflection(onChanged: _onReflectionTextChanged),
                   ],
                 ),
