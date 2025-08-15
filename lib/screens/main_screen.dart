@@ -17,6 +17,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late bool _completed;
   final db = FirebaseFirestore.instance;
+  late dynamic pastEvents;
 
   Map<String, dynamic>? _currentTask;
   String randomTask = "";
@@ -57,6 +58,8 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _currentTask = {"task": compiledTask, "category": taskCategory};
     });
+
+    pastEvents = getUserEvents(userData['id']);
   }
 
   @override
@@ -83,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pushNamed(
                   context,
                   '/calendar',
-                  arguments: userEvents,
+                  arguments: pastEvents,
                 );
               },
             ),

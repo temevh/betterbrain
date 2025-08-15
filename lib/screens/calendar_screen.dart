@@ -41,8 +41,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final userEvents = ModalRoute.of(context)!.settings.arguments as List?;
-    _setEvents(userEvents ?? []);
+    final userEvents = ModalRoute.of(context)!.settings.arguments as List;
+    _setEvents(userEvents);
   }
 
   Future<void> _setEvents(List userEvents) async {
