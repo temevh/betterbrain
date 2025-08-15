@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:namer_app/services/database_service.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
-import 'dart:math';
 //import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,6 +17,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late bool _completed;
   final db = FirebaseFirestore.instance;
+  late dynamic pastEvents;
 
   Map<String, dynamic>? _currentTask;
   String randomTask = "";
@@ -38,50 +39,27 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _loadRandomTask() async {
-    final taskSnapshot = await db.collection("tasks").get();
-    final tasks = taskSnapshot.docs.map((doc) => doc.data()).toList();
+    final tasks = await getAllTasks();
+    final selectedTask = getRandomTask(tasks);
+    if (selectedTask == null) return;
 
-    if (tasks.isEmpty) return;
+    final userEmail = "john@example.com";
+    final userData = await getUserByEmail(userEmail);
+    // ignore: unnecessary_null_comparison
+    if (userData == null) return;
 
-    final selectedTask = tasks[Random().nextInt(tasks.length)];
-    print("selected task $selectedTask");
     final taskCategory = selectedTask['category'];
-    print("task category $taskCategory");
+    final userStats = Map<String, dynamic>.from(userData['stats']);
+    final difficulty = applyStats(userStats, taskCategory);
 
-    final userEmail = "john@example.com"; // TODO: replace with auth
-    final userQuery = await db
-        .collection("users")
-        .where("email", isEqualTo: userEmail)
-        .limit(1)
-        .get();
-
-    if (userQuery.docs.isEmpty) return;
-
-    final userDoc = userQuery.docs.first;
-    final userData = userDoc.data();
-
-    final Map<String, dynamic> userStats = Map<String, dynamic>.from(
-      userData['stats'],
-    );
-    final userStat = userStats[taskCategory] ?? 1;
-
-    final String templateTask = selectedTask['task'] ?? '';
-    final String category = selectedTask['category'];
-
-    int minutes = userStat * 7; // Adjust multiplier as needed
-    String compiledTask = templateTask.replaceAll('§', minutes.toString());
+    final templateTask = selectedTask['task'] ?? '';
+    final compiledTask = templateTask.replaceAll('§', difficulty.toString());
 
     setState(() {
-      _currentTask = {"task": compiledTask, "category": category};
+      _currentTask = {"task": compiledTask, "category": taskCategory};
     });
 
-    final eventsSnapshot = await db
-        .collection("users")
-        .doc(userDoc.id)
-        .collection('calendar')
-        .get();
-
-    userEvents = eventsSnapshot.docs.map((doc) => doc.data()).toList();
+    pastEvents = getUserEvents(userData['id']);
   }
 
   @override
@@ -108,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pushNamed(
                   context,
                   '/calendar',
-                  arguments: userEvents,
+                  arguments: pastEvents,
                 );
               },
             ),
