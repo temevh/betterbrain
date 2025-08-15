@@ -16,11 +16,17 @@ class SuccessScreen extends StatefulWidget {
 class _SuccessScreenState extends State<SuccessScreen> {
   int? selectedFeedback;
   String reflectionText = "";
-  dynamic task = {};
+  Map<String, dynamic>? args;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        args =
+            ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      });
+    });
   }
 
   void _onFeedbackSelected(int feedback) {
@@ -36,12 +42,13 @@ class _SuccessScreenState extends State<SuccessScreen> {
   }
 
   void _onSavePressed() {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-    print("User feedback selection: $selectedFeedback");
-    print("User reflection text: $reflectionText");
     if (args != null) {
-      saveTask(args, "5QY7xynBreMil6jwDd9h", selectedFeedback, reflectionText);
+      saveTask(
+        args,
+        "5QY7xynBreMil6jwDd9h",
+        selectedFeedback ?? 0,
+        reflectionText,
+      );
     } else {
       print("No task data to save");
     }
@@ -49,8 +56,10 @@ class _SuccessScreenState extends State<SuccessScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    if (args == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     final task = args?['task'] ?? 'Unknown task';
     final category = args?['category'] ?? 'Unknown category';
 
@@ -70,20 +79,13 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    /* 
-                    Opacity(
-                      opacity: 0.6,
-                      child: const Text(
-                        "Todays task was:",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),*/
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.green,
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(12),
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.blueGrey,
@@ -93,23 +95,19 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         ],
                       ),
                       width: 350,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              task,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          task,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Opacity(
                       opacity: 0.8,
                       child: Container(
@@ -147,7 +145,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
                     FeedbackRow(
                       selectedFeedback: selectedFeedback,
                       onFeedbackSelected: _onFeedbackSelected,
