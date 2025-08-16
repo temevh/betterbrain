@@ -50,7 +50,7 @@ class EventCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(8, 20, 8, 20),
       child: Center(
         child: Container(
-          width: 380,
+          width: 320,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
@@ -68,7 +68,7 @@ class EventCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: containerColor,
-                  fontSize: 32,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -93,7 +93,7 @@ class EventCard extends StatelessWidget {
                     children: [
                       Icon(
                         getCategoryIcon(category),
-                        size: 20,
+                        size: 16,
                         color: getCategoryColor(category),
                       ),
                       const SizedBox(width: 6),
@@ -101,7 +101,7 @@ class EventCard extends StatelessWidget {
                         category,
                         style: TextStyle(
                           color: getCategoryColor(category),
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -117,7 +117,7 @@ class EventCard extends StatelessWidget {
                   DateFormat('yyyy-MM-dd').format(selectedDate),
                   style: TextStyle(
                     color: containerColor,
-                    fontSize: 22,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

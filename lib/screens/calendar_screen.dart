@@ -45,6 +45,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
     _setEvents(userEvents);
   }
 
+  Color _bgForDay(DateTime day) {
+    final events = _getEventsForDay(day);
+    if (events.isEmpty) return Colors.transparent;
+
+    final allCompleted = events.every((e) => e.isCompleted);
+    final allNotCompleted = events.every((e) => !e.isCompleted);
+
+    if (allCompleted) return Colors.green;
+    if (allNotCompleted) return Colors.red;
+    return Colors.orange; // mixed
+  }
+
   Future<void> _setEvents(List userEvents) async {
     final Map<DateTime, List<Event>> eventsMap = {};
 
@@ -96,43 +108,41 @@ class _CalendarScreenState extends State<CalendarScreen> {
             },
             eventLoader: _getEventsForDay,
             calendarFormat: CalendarFormat.month,
-            headerStyle: HeaderStyle(
+
+            // Ensure TableCalendar doesn't add its own "today" highlight
+            calendarStyle: const CalendarStyle(isTodayHighlighted: false),
+
+            headerStyle: const HeaderStyle(
               formatButtonVisible: false,
               titleCentered: true,
-              titleTextStyle: const TextStyle(
+              titleTextStyle: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
 
             calendarBuilders: CalendarBuilders(
-              markerBuilder: (context, day, events) {
-                return const SizedBox();
-              },
+              markerBuilder: (context, day, events) => const SizedBox(),
+
+              // Normal day
               defaultBuilder: (context, day, focusedDay) {
-                final events = _getEventsForDay(day);
-                if (events.isEmpty) {
-                  return Center(child: Text('${day.day}'));
+                final bg = _bgForDay(day);
+                if (bg == Colors.transparent) {
+                  return Center(
+                    child: Text(
+                      '${day.day}',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  );
                 }
-
-                bool allCompleted = events.every((event) => event.isCompleted);
-                bool allNotCompleted = events.every(
-                  (event) => !event.isCompleted,
-                );
-                Color bgColor = allCompleted
-                    ? Colors.green
-                    : allNotCompleted
-                    ? Colors.red
-                    : Colors.orange;
-
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
-                    color: bgColor,
+                    color: bg,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: bgColor.withOpacity(0.4),
+                        color: bg.withOpacity(0.4),
                         blurRadius: 6,
                         spreadRadius: 1,
                       ),
@@ -142,77 +152,58 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     '${day.day}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ), // see _DayText below
                 );
               },
 
+              // Selected day (no special rule for today)
               selectedBuilder: (context, day, focusedDay) {
-                // Detect if it's today
-                bool isToday = isSameDay(day, DateTime.now());
-
-                final events = _getEventsForDay(day);
-                Color bgColor;
-
-                if (isToday) {
-                  bgColor = Colors.purple; // today color
-                } else if (events.isNotEmpty) {
-                  bool allCompleted = events.every((e) => e.isCompleted);
-                  bool allNotCompleted = events.every((e) => !e.isCompleted);
-
-                  if (allCompleted) {
-                    bgColor = Colors.green;
-                  } else if (allNotCompleted) {
-                    bgColor = Colors.red;
-                  } else {
-                    bgColor = Colors.orange; // mixed state
-                  }
-                } else {
-                  bgColor = Colors.transparent;
-                }
-
+                final bg = _bgForDay(day);
                 return Container(
                   decoration: BoxDecoration(
-                    color: bgColor,
+                    color: bg,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      width: 3,
-                      color: Colors.white,
-                    ), // white border
+                    border: Border.all(width: 2, color: Colors.white),
                   ),
                   margin: const EdgeInsets.all(6),
                   alignment: Alignment.center,
                   child: Text(
                     '${day.day}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 );
               },
 
+              // Make "today" behave like any other day with events
               todayBuilder: (context, day, focusedDay) {
-                return Opacity(
-                  opacity: 0.6,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.purple,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.purple,
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    margin: const EdgeInsets.all(6),
-                    alignment: Alignment.center,
+                final bg = _bgForDay(day);
+                if (bg == Colors.transparent) {
+                  return Center(
                     child: Text(
                       '${day.day}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 18),
                     ),
+                  );
+                }
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  decoration: BoxDecoration(
+                    color: bg,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: bg.withOpacity(0.4),
+                        blurRadius: 6,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  margin: const EdgeInsets.all(6),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${day.day}',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 );
               },
