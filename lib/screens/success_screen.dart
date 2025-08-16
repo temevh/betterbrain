@@ -82,13 +82,13 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     const SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.green,
+                        color: Colors.white,
                         borderRadius: const BorderRadius.all(
                           Radius.circular(12),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.blueGrey,
+                            color: Colors.black,
                             offset: const Offset(8, 10),
                             blurRadius: 0,
                           ),
@@ -102,12 +102,13 @@ class _SuccessScreenState extends State<SuccessScreen> {
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 32,
+                            color: Colors.green,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
                     Opacity(
                       opacity: 0.8,
                       child: Container(

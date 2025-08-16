@@ -79,23 +79,130 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(30, 50, 0, 0),
-          children: [
-            ListTile(
-              title: const Text('Calendar'),
-              onTap: () async {
-                if (_userId != null) {
-                  final events = await getUserEvents(_userId!);
-                  Navigator.pushNamed(context, '/calendar', arguments: events);
-                } else {
-                  print("User ID not loaded yet");
-                }
-              },
-            ),
-          ],
+        child: Container(
+          color: const Color(0xFF2B2726),
+          child: Column(
+            children: [
+              // Main content scrollable
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 50,
+                    horizontal: 20,
+                  ),
+                  children: [
+                    // Optional header
+                    Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.green,
+                          child: Icon(
+                            Icons.person,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              "John Doe",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "john@example.com",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+
+                    // Menu items
+                    ListTile(
+                      leading: const Icon(
+                        Icons.calendar_today,
+                        color: Colors.green,
+                      ),
+                      title: const Text(
+                        'Calendar',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      onTap: () async {
+                        if (_userId != null) {
+                          final events = await getUserEvents(_userId!);
+                          Navigator.pushNamed(
+                            context,
+                            '/calendar',
+                            arguments: events,
+                          );
+                        } else {
+                          print("User ID not loaded yet");
+                        }
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      tileColor: Colors.white10,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    ListTile(
+                      leading: const Icon(Icons.settings, color: Colors.green),
+                      title: const Text(
+                        'Settings',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      onTap: () {},
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      tileColor: Colors.white10,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.redAccent),
+                  title: const Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  onTap: () {
+                    // Handle logout
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  tileColor: Colors.white10,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+
       backgroundColor: _completed ? Colors.green : const Color(0xFF2B2726),
       body: Center(
         child: SafeArea(
