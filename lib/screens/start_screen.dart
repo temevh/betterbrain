@@ -80,7 +80,9 @@ class _StartScreenState extends State<StartScreen> {
                     _buildAuthButton(
                       label: "Create New Account",
                       icon: const Icon(Icons.person_add, color: Colors.white),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/createAccount');
+                      },
                     ),
                     const SizedBox(height: 12),
                     _buildAuthButton(
