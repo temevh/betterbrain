@@ -121,7 +121,7 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
                     ),
                   ),
                   child: const Text(
-                    "Save",
+                    "Next",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),

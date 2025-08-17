@@ -9,75 +9,67 @@ class ConfidenceScreen extends StatefulWidget {
 }
 
 class _ConfidenceScreenState extends State<ConfidenceScreen> {
-  double _sliderValue = 5;
-  double _chipWidth = 0;
+  double _chipWidth = 160;
 
-  @override
-  void initState() {
-    super.initState();
-    _chipWidth = 140;
+  Map<String, double> confidence = {};
+
+  void _onChanged(String category, double value) {
+    setState(() {
+      confidence[category] = value;
+    });
   }
 
   Widget _confidenceSelection(String category) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
-            children: [
-              Container(
-                width: _chipWidth,
-                height: 40,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
+    final value = confidence[category] ?? 1;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            width: _chipWidth, // fixed width for all chips
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: getCategoryColor(category).withOpacity(0.25),
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(color: getCategoryColor(category), width: 1.5),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  getCategoryIcon(category),
+                  size: 20,
+                  color: getCategoryColor(category),
                 ),
-                decoration: BoxDecoration(
-                  color: getCategoryColor(category).withOpacity(0.25),
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(
+                const SizedBox(width: 6),
+                Text(
+                  category.toUpperCase(),
+                  style: TextStyle(
                     color: getCategoryColor(category),
-                    width: 1.5,
+                    fontSize: 14,
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          getCategoryIcon(category),
-                          size: 20,
-                          color: getCategoryColor(category),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          category.toUpperCase(),
-                          style: TextStyle(
-                            color: getCategoryColor(category),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Slider(
-                  value: 5,
-                  onChanged: (value) => {},
-                  max: 10,
-                  min: 1,
-                  activeColor: getCategoryColor(category),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 20),
-      ],
+          const SizedBox(width: 12),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Slider(
+                value: value.toDouble(),
+                onChanged: (newValue) => _onChanged(category, newValue),
+                divisions: 9,
+                max: 10,
+                min: 1,
+                activeColor: getCategoryColor(category),
+              ),
+            ),
+          ),
+          Text(value.toInt().toString(), style: TextStyle(fontSize: 16)),
+        ],
+      ),
     );
   }
 
@@ -106,32 +98,35 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
             for (var category in categories.entries)
               if (category.value == true) _confidenceSelection(category.key),
             Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  categories.containsValue(true)
-                      ? Navigator.pushNamed(
-                          context,
-                          ('/'),
-                          arguments: categories,
-                        )
-                      : null;
-                },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    categories.containsValue(true)
+                        ? Navigator.pushNamed(
+                            context,
+                            ('/'),
+                            arguments: categories,
+                          )
+                        : null;
+                  },
 
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: categories.containsValue(true)
-                      ? Colors.greenAccent
-                      : Colors.grey,
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: categories.containsValue(true)
+                        ? Colors.greenAccent
+                        : Colors.grey,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  "Save",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  child: const Text(
+                    "Save",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ),
