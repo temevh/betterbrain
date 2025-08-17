@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/utils/category_utils.dart';
 
 class CategorySelectionsScreen extends StatefulWidget {
   const CategorySelectionsScreen({super.key});
@@ -10,12 +11,66 @@ class CategorySelectionsScreen extends StatefulWidget {
 
 class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
   //Get categories from firebase
+  final categories = {
+    "health": false,
+    "learning": false,
+    "productivity": false,
+    "selfcare": false,
+    "social": false,
+  };
 
-  Widget _categorySelection(dynamic category) {
-    return Row(
+  Widget _categorySelection(String category, bool value) {
+    return Column(
       children: [
-        Text(category),
-        Checkbox(value: category.first, onChanged: (value) => {}),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              categories.update(category, (v) => !v);
+            });
+          },
+          child: Opacity(
+            opacity: value == true ? 1 : 0.3,
+            child: Container(
+              height: 60,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: getCategoryColor(category).withOpacity(0.25),
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(
+                  color: getCategoryColor(category),
+                  width: 1.5,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        getCategoryIcon(category),
+                        size: 20,
+                        color: getCategoryColor(category),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        category.toUpperCase(),
+                        style: TextStyle(
+                          color: getCategoryColor(category),
+                          fontSize: 18,
+                          fontWeight: value == true
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -41,7 +96,7 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
               const SizedBox(height: 40),
               for (var c in categories.entries)
                 _categorySelection(c.key, c.value),
-
+              Spacer(),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
