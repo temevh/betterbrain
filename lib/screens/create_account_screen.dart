@@ -41,6 +41,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
+  bool checkPasswordMatch() {
+    if (password == passwordVerify) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +60,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Create Account",
+                "Create Account✨",
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -116,6 +124,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     // TODO: Handle sign-up
+                    Navigator.pushNamed(context, '/categorySelection');
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
