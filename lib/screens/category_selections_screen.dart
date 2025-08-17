@@ -100,10 +100,21 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    categories.containsValue(true)
+                        ? Navigator.pushNamed(
+                            context,
+                            ('/confidence'),
+                            arguments: categories,
+                          )
+                        : null;
+                  },
+
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Colors.greenAccent,
+                    backgroundColor: categories.containsValue(true)
+                        ? Colors.greenAccent
+                        : Colors.grey,
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

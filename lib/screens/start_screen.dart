@@ -91,7 +91,9 @@ class _StartScreenState extends State<StartScreen> {
                         Icons.person_outline,
                         color: Colors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/categorySelection');
+                      },
                     ),
                   ],
                 ),
