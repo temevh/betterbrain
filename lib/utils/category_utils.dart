@@ -28,7 +28,7 @@ Color getCategoryColor(String category) {
     case 'selfcare':
       return Colors.red;
     case 'learning':
-      return Colors.indigo;
+      return Colors.cyanAccent;
     default:
       return Colors.grey;
   }

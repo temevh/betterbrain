@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
@@ -74,4 +72,35 @@ Future<bool> saveTask(
     print("Error saving event: $e");
     return false;
   }
+}
+
+Future<Map<bool, String>> createAccount(String email, String password) async {
+  print("Email $email password $password");
+  try {
+    final usersRef = FirebaseFirestore.instance.collection("users");
+
+    //Check db is user exists
+    final userExists = await usersRef
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    if (userExists.docs.isNotEmpty) {
+      return {false: "Email already in use"}; //user exists, can create user
+    }
+
+    await usersRef.add({
+      'email': email,
+      'password': password, //add hashing
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    return {true: "User created succesfully!"};
+  } catch (e) {
+    print("Error adding user $e");
+    return {false: "Error $e"}; //Remove error message in prod
+  }
+}
+
+Future<bool> saveStats(Map<String, double> selections) async {
+  return true;
 }
