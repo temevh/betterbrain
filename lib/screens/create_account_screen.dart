@@ -12,6 +12,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   String email = "";
   String password = "";
   String passwordVerify = "";
+  Map<String, bool> passwordValidity = {
+    "Be more than 6 characters": false,
+    "Have an uppercase letter": false,
+    "Include a number": false,
+    "Passwords must match": false,
+  };
   bool errorCreating = false;
   String message = "";
 
@@ -51,6 +57,23 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
+  Widget _passwordValidity(String prompt, bool validity) {
+    return Row(
+      children: [
+        Text(
+          prompt,
+          style: TextStyle(
+            color: validity ? Colors.greenAccent : Colors.redAccent,
+          ),
+        ),
+        Icon(
+          validity ? Icons.check : Icons.close,
+          color: validity ? Colors.greenAccent : Colors.redAccent,
+        ),
+      ],
+    );
+  }
+
   void _savePressed() async {
     Map<bool, String> addStatus = await createAccount(email, password);
 
@@ -73,6 +96,34 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         duration: const Duration(seconds: 3),
       ),
     );
+  }
+
+  void updatePassword(String value) {
+    setState(() {
+      passwordVerify = value;
+      _checkPasswordRules();
+    });
+  }
+
+  void updateMainPassword(String value) {
+    setState(() {
+      password = value;
+      _checkPasswordRules();
+    });
+  }
+
+  void _checkPasswordRules() {
+    setState(() {
+      passwordValidity["Be more than 6 characters"] = password.length > 6;
+      passwordValidity["Have an uppercase letter"] = password.contains(
+        RegExp(r'[A-Z]'),
+      );
+      passwordValidity["Include a number"] = password.contains(
+        RegExp(r'[0-9]'),
+      );
+      passwordValidity["Passwords must match"] =
+          password == passwordVerify && password.isNotEmpty;
+    });
   }
 
   @override
@@ -120,7 +171,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               _buildInputField(
                 "Enter password",
                 Icons.lock,
-                (value) => setState(() => password = value),
+                (value) => updateMainPassword(value),
                 obscure: true,
               ),
 
@@ -135,9 +186,22 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               _buildInputField(
                 "Re-enter password",
                 Icons.lock_outline,
-                (value) => setState(() => passwordVerify = value),
+                (value) => updatePassword(value),
                 obscure: true,
               ),
+              SizedBox(height: 10),
+              Opacity(
+                opacity: 0.6,
+                child: const Text(
+                  "Password should:",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+              ...passwordValidity.entries
+                  .map(
+                    (element) => _passwordValidity(element.key, element.value),
+                  )
+                  .toList(),
 
               const Spacer(),
 
@@ -147,11 +211,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     // TODO: Handle sign-up
-                    _savePressed();
+                    passwordValidity.containsValue(false)
+                        ? null
+                        : _savePressed();
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Colors.greenAccent,
+                    backgroundColor: passwordValidity.containsValue(false)
+                        ? Colors.grey
+                        : Colors.greenAccent,
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

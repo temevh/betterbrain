@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
@@ -77,6 +75,7 @@ Future<bool> saveTask(
 }
 
 Future<Map<bool, String>> createAccount(String email, String password) async {
+  print("Email $email password $password");
   try {
     final usersRef = FirebaseFirestore.instance.collection("users");
 
