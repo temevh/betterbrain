@@ -100,3 +100,7 @@ Future<Map<bool, String>> createAccount(String email, String password) async {
     return {false: "Error $e"}; //Remove error message in prod
   }
 }
+
+Future<bool> saveStats(Map<String, double> selections) async {
+  return true;
+}
