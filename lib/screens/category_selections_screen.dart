@@ -10,7 +10,7 @@ class CategorySelectionsScreen extends StatefulWidget {
 }
 
 class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
-  //Get categories from firebase
+  //Get categories from firebase s
   final categories = {
     "health": false,
     "learning": false,
