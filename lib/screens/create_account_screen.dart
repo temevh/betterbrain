@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/services/database_service.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -11,6 +12,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   String email = "";
   String password = "";
   String passwordVerify = "";
+  bool errorCreating = false;
+  String message = "";
 
   Widget _buildInputField(
     String hint,
@@ -46,6 +49,30 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     } else {
       return false;
     }
+  }
+
+  void _savePressed() async {
+    Map<bool, String> addStatus = await createAccount(email, password);
+
+    if (addStatus.keys.first) {
+      errorCreating = false;
+      // Success → navigate
+      Navigator.pushNamed(context, '/categorySelection');
+    } else {
+      setState(() {
+        errorCreating = true;
+      });
+    }
+    message = addStatus.values.first;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: errorCreating ? Colors.redAccent : Colors.green,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -120,7 +147,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     // TODO: Handle sign-up
-                    Navigator.pushNamed(context, '/categorySelection');
+                    _savePressed();
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),

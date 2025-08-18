@@ -76,6 +76,28 @@ Future<bool> saveTask(
   }
 }
 
-Future<bool> createAccount(String email, String password) async {
-  return false;
+Future<Map<bool, String>> createAccount(String email, String password) async {
+  try {
+    final usersRef = FirebaseFirestore.instance.collection("users");
+
+    //Check db is user exists
+    final userExists = await usersRef
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    if (userExists.docs.isNotEmpty) {
+      return {false: "Email already in use"}; //user exists, can create user
+    }
+
+    await usersRef.add({
+      'email': email,
+      'password': password, //add hashing
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    return {true: "User created succesfully!"};
+  } catch (e) {
+    print("Error adding user $e");
+    return {false: "Error $e"}; //Remove error message in prod
+  }
 }
