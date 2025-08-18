@@ -6,6 +6,7 @@ import 'screens/start_screen.dart';
 import 'screens/create_account_screen.dart';
 import 'package:namer_app/screens/category_selections_screen.dart';
 import 'package:namer_app/screens/confidence_screen.dart';
+import 'package:namer_app/screens/login_screen.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
   '/': (context) => const MainScreen(),
@@ -15,4 +16,5 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/createAccount': (context) => const CreateAccountScreen(),
   '/categorySelection': (context) => const CategorySelectionsScreen(),
   '/confidence': (context) => const ConfidenceScreen(),
+  '/loginscreen': (context) => const LoginScreen(),
 };

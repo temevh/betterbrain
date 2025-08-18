@@ -84,17 +84,28 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
-              child: const Text(
-                "How confident from 1 to 10 do you feel in each category?",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 28),
+              child: Column(
+                children: [
+                  const Text(
+                    "How confident from 1 to 10 do you feel in each category? 🤔",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Opacity(
+                    opacity: 0.6,
+                    child: const Text(
+                      "Selections affect the difficulty of the tasks",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 40),
             for (var category in categories.entries)
               if (category.value == true) _confidenceSelection(category.key),
             Spacer(),

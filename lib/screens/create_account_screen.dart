@@ -8,7 +8,6 @@ class CreateAccountScreen extends StatefulWidget {
 }
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
-  String firstName = "";
   String email = "";
   String password = "";
   String passwordVerify = "";
@@ -67,18 +66,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 40),
-
-              // Name
-              const Text("Name", style: TextStyle(color: Colors.white70)),
-              const SizedBox(height: 8),
-              _buildInputField(
-                "Enter your first name",
-                Icons.person,
-                (value) => setState(() => firstName = value),
+              SizedBox(height: 10),
+              Opacity(
+                opacity: 0.6,
+                child: const Text(
+                  "Account will be used to save tasks and settings across devices",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
-
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
 
               // Email
               const Text("Email", style: TextStyle(color: Colors.white70)),

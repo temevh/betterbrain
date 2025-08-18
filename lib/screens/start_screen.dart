@@ -67,6 +67,7 @@ class _StartScreenState extends State<StartScreen> {
                       ),
                       onPressed: () {},
                     ),
+                    /* 
                     const SizedBox(height: 12),
                     _buildAuthButton(
                       label: "Continue with Apple",
@@ -76,9 +77,10 @@ class _StartScreenState extends State<StartScreen> {
                       ),
                       onPressed: () {},
                     ),
+                    */
                     const SizedBox(height: 12),
                     _buildAuthButton(
-                      label: "Create New Account",
+                      label: "Sign in with email",
                       icon: const Icon(Icons.person_add, color: Colors.white),
                       onPressed: () {
                         Navigator.pushNamed(context, '/createAccount');
@@ -94,6 +96,30 @@ class _StartScreenState extends State<StartScreen> {
                       onPressed: () {
                         Navigator.pushNamed(context, '/categorySelection');
                       },
+                    ),
+                    SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Already a user? ",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16, color: Colors.white54),
+                        ),
+                        GestureDetector(
+                          onTap: () => {
+                            Navigator.pushNamed(context, '/loginscreen'),
+                          },
+                          child: const Text(
+                            "Log in instead",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.greenAccent,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

@@ -75,3 +75,7 @@ Future<bool> saveTask(
     return false;
   }
 }
+
+Future<bool> createAccount(String email, String password) async {
+  return false;
+}
