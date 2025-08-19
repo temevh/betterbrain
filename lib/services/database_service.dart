@@ -33,7 +33,7 @@ Future<Map<String, dynamic>?> getUserByEmail(String email) async {
 //Apply users stats to the task
 int applyStats(Map<String, dynamic> stats, String category) {
   final stat = stats[category] ?? 3;
-  return stat * 7;
+  return stat.toInt() * 7;
 }
 
 //Fetch all past events for user
