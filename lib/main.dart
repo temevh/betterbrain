@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'routes.dart';
@@ -6,13 +7,15 @@ import 'routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  final User? currentUser = FirebaseAuth.instance.currentUser;
+  final String initialRoute = currentUser == null ? '/start' : '/';
+  runApp(MyApp(initialRoute: initialRoute));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.initialRoute});
 
-  final bool isBoarded = false;
+  final String initialRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: isBoarded == false ? '/start' : '/',
+      initialRoute: initialRoute,
       routes: appRoutes,
     );
   }
