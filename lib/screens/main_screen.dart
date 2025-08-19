@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/services/database_service.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
@@ -44,20 +45,32 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _loadRandomTask() async {
     final tasks = await getAllTasks();
     final selectedTask = getRandomTask(tasks);
+    print("SelectedTask: $selectedTask");
     if (selectedTask == null) return;
 
-    final userEmail = "john@example.com";
-    final userData = await getUserByEmail(userEmail);
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null || currentUser.email == null) {
+      //Change to use local storage if user is guest
+      print("No logged-in user or user has no email");
+      return;
+    }
+
+    final userData = await getUserByEmail(currentUser.email!);
+    print("userData: $userData");
     if (userData == null) return;
 
     _userId = userData['id']; // store for later
 
     final taskCategory = selectedTask['category'];
-    final userStats = Map<String, dynamic>.from(userData['stats']);
+    print("taskCategory: $taskCategory");
+
+    // If stats don’t exist yet, provide defaults
+    final userStats = Map<String, dynamic>.from(userData['stats'] ?? {});
     final difficulty = applyStats(userStats, taskCategory);
 
     final templateTask = selectedTask['task'] ?? '';
     final compiledTask = templateTask.replaceAll('§', difficulty.toString());
+    print("compiledTask: $compiledTask");
 
     setState(() {
       _currentTask = {"task": compiledTask, "category": taskCategory};
