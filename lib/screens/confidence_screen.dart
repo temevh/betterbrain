@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/services/database_service.dart';
 import 'package:namer_app/utils/category_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ConfidenceScreen extends StatefulWidget {
   const ConfidenceScreen({super.key});
@@ -17,6 +19,38 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
     setState(() {
       confidence[category] = value;
     });
+  }
+
+  void _saveSelections(Map<String, bool> categories) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String? token = await user.getIdToken();
+      print("Token: $token");
+    }
+
+    final selectedConfidence = {
+      for (var entry in categories.entries)
+        if (entry.value) entry.key: confidence[entry.key] ?? 1,
+    };
+
+    print("Selected confidence: $selectedConfidence");
+
+    // Send to your database service
+    final bool ok = await saveStats(selectedConfidence);
+
+    // Optionally navigate back
+    if (ok) {
+      Navigator.pushNamed(context, '/');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error saving stats"),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   Widget _confidenceSelection(String category) {
@@ -115,13 +149,7 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    categories.containsValue(true)
-                        ? Navigator.pushNamed(
-                            context,
-                            ('/'),
-                            arguments: categories,
-                          )
-                        : null;
+                    _saveSelections(categories);
                   },
 
                   style: ElevatedButton.styleFrom(
