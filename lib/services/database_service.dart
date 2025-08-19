@@ -132,16 +132,6 @@ Future<({bool success, User? user, String code, String message})>
 loginWithEmail(String email, String password) async {
   final trimmedEmail = email.trim();
 
-  if (trimmedEmail.isEmpty || password.isEmpty) {
-    return (
-      success: false,
-      user: null,
-      code: 'empty-fields',
-      message: 'Email and password are required.',
-    );
-  }
-
-  // Basic e-mail format check to fail fast before hitting the network
   final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
   if (!emailRegex.hasMatch(trimmedEmail)) {
     return (
@@ -166,7 +156,7 @@ loginWithEmail(String email, String password) async {
     String code = e.code;
     String message;
 
-    switch (e.code) {
+    switch (code) {
       case 'invalid-email':
         message = 'The email address is badly formatted.';
         break;
@@ -176,10 +166,10 @@ loginWithEmail(String email, String password) async {
       case 'user-not-found':
         message = 'No user found with this email.';
         break;
-      case 'wrong-password':
-        message = 'Incorrect password.';
+      case 'wrong-password': // old Firebase SDKs
+        message = 'Invalid email or password.';
         break;
-      case 'invalid-credential':
+      case 'invalid-credential': // new Firebase SDKs
         message = 'Invalid email or password.';
         break;
       case 'too-many-requests':
@@ -192,7 +182,7 @@ loginWithEmail(String email, String password) async {
         message = 'Network error. Check your internet connection.';
         break;
       default:
-        message = 'Authentication error: ${e.message ?? e.code}';
+        message = 'Error logging in';
     }
 
     return (success: false, user: null, code: code, message: message);
