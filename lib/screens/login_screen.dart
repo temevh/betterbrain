@@ -12,14 +12,23 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String email = "";
   String password = "";
+  String? errorMessage;
 
   Future<void> _handleLogin() async {
+    setState(() => errorMessage = null);
     try {
-      final user = await loginWithEmail(email, password);
+      final result = await loginWithEmail(email, password);
 
-      if (user != null) Navigator.pushNamed(context, '/');
+      if (result.success && result.user != null) {
+        if (!mounted) return;
+        Navigator.pushNamed(context, '/');
+      } else {
+        if (!mounted) return;
+        setState(() => errorMessage = result.message);
+      }
     } catch (e) {
-      print("Error in _handleLogin: $e");
+      if (!mounted) return;
+      setState(() => errorMessage = 'Unexpected error: $e');
     }
   }
 
@@ -64,6 +73,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               const Spacer(),
+
+              if (errorMessage != null) ...[
+                Text(
+                  errorMessage!,
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
+                const SizedBox(height: 12),
+              ],
 
               // Submit button
               SizedBox(
