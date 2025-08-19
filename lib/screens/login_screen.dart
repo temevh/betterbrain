@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/services/database_service.dart';
 import 'package:namer_app/widgets/build_input_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -11,8 +12,25 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String email = "";
   String password = "";
+  String? errorMessage;
 
-  void _loginPressed() {}
+  Future<void> _handleLogin() async {
+    setState(() => errorMessage = null);
+    try {
+      final result = await loginWithEmail(email, password);
+
+      if (result.success && result.user != null) {
+        if (!mounted) return;
+        Navigator.pushNamed(context, '/');
+      } else {
+        if (!mounted) return;
+        setState(() => errorMessage = result.message);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => errorMessage = 'Unexpected error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,30 +65,38 @@ class _LoginScreenState extends State<LoginScreen> {
               // Password
               const Text("Password", style: TextStyle(color: Colors.white70)),
               const SizedBox(height: 8),
-              buildInputField("Enter password", Icons.lock, (value) {
-                (value) => setState(() => password = value);
-              }, obscure: true),
+              buildInputField(
+                "Enter password",
+                Icons.lock,
+                (value) => setState(() => password = value),
+                obscure: true,
+              ),
 
               const Spacer(),
+
+              if (errorMessage != null) ...[
+                Text(
+                  errorMessage!,
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
+                const SizedBox(height: 12),
+              ],
 
               // Submit button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Handle log in
-                    password.length > 6 ? null : _loginPressed();
-                  },
+                  onPressed: _handleLogin,
+
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: password.length > 6
-                        ? Colors.grey
-                        : Colors.greenAccent,
+                    backgroundColor: Colors.greenAccent,
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+
                   child: const Text(
                     "Log in",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

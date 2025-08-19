@@ -127,3 +127,71 @@ Future<bool> saveStats(Map<String, double> selections) async {
     return false;
   }
 }
+
+Future<({bool success, User? user, String code, String message})>
+loginWithEmail(String email, String password) async {
+  final trimmedEmail = email.trim();
+
+  final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+  if (!emailRegex.hasMatch(trimmedEmail)) {
+    return (
+      success: false,
+      user: null,
+      code: 'invalid-email-format',
+      message: 'Please enter a valid email address.',
+    );
+  }
+
+  try {
+    final UserCredential userCredential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: trimmedEmail, password: password);
+
+    return (
+      success: true,
+      user: userCredential.user,
+      code: 'ok',
+      message: 'Logged in successfully.',
+    );
+  } on FirebaseAuthException catch (e) {
+    String code = e.code;
+    String message;
+
+    switch (code) {
+      case 'invalid-email':
+        message = 'The email address is badly formatted.';
+        break;
+      case 'user-disabled':
+        message = 'This user account has been disabled.';
+        break;
+      case 'user-not-found':
+        message = 'No user found with this email.';
+        break;
+      case 'wrong-password': // old Firebase SDKs
+        message = 'Invalid email or password.';
+        break;
+      case 'invalid-credential': // new Firebase SDKs
+        message = 'Invalid email or password.';
+        break;
+      case 'too-many-requests':
+        message = 'Too many attempts. Try again later.';
+        break;
+      case 'operation-not-allowed':
+        message = 'Email/password accounts are not enabled.';
+        break;
+      case 'network-request-failed':
+        message = 'Network error. Check your internet connection.';
+        break;
+      default:
+        message = 'Error logging in';
+    }
+
+    return (success: false, user: null, code: code, message: message);
+  } catch (e) {
+    return (
+      success: false,
+      user: null,
+      code: 'unexpected-error',
+      message: 'Unexpected error: $e',
+    );
+  }
+}
