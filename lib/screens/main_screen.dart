@@ -77,6 +77,11 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  void _logOutPressed() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushNamed(context, '/start');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -203,6 +208,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   onTap: () {
                     // Handle logout
+                    _logOutPressed();
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
