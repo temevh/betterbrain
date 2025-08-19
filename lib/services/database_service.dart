@@ -110,5 +110,20 @@ Future<Map<bool, String>> createAccount(String email, String password) async {
 }
 
 Future<bool> saveStats(Map<String, double> selections) async {
-  return true;
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return false;
+
+  final userId = user.uid;
+
+  try {
+    final userRef = FirebaseFirestore.instance.collection("users").doc(userId);
+
+    await userRef.set({'stats': selections}, SetOptions(merge: true));
+
+    print("Stats saved for user $userId");
+    return true;
+  } catch (e) {
+    print("Error saving stats $e");
+    return false;
+  }
 }
