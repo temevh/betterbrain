@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/utils/category_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ConfidenceScreen extends StatefulWidget {
   const ConfidenceScreen({super.key});
@@ -17,6 +18,20 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
     setState(() {
       confidence[category] = value;
     });
+  }
+
+  void _saveSelections(dynamic categories) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String? token = await user.getIdToken(); // JWT token
+      print("Token: $token");
+    }
+
+    /*
+    categories.containsValue(true)
+        ? Navigator.pushNamed(context, ('/'), arguments: categories)
+        : null;
+        */
   }
 
   Widget _confidenceSelection(String category) {
@@ -115,13 +130,7 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    categories.containsValue(true)
-                        ? Navigator.pushNamed(
-                            context,
-                            ('/'),
-                            arguments: categories,
-                          )
-                        : null;
+                    _saveSelections(categories);
                   },
 
                   style: ElevatedButton.styleFrom(

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
 
 final db = FirebaseFirestore.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 //Fetch all tasks from the firebase database
 Future<List<Map<String, dynamic>>> getAllTasks() async {
@@ -75,29 +77,35 @@ Future<bool> saveTask(
 }
 
 Future<Map<bool, String>> createAccount(String email, String password) async {
-  print("Email $email password $password");
   try {
+    // Create account in Firebase Auth
+    UserCredential userCred = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    // Save extra info in Firestore (not password!)
     final usersRef = FirebaseFirestore.instance.collection("users");
-
-    //Check db is user exists
-    final userExists = await usersRef
-        .where('email', isEqualTo: email)
-        .limit(1)
-        .get();
-
-    if (userExists.docs.isNotEmpty) {
-      return {false: "Email already in use"}; //user exists, can create user
-    }
-
-    await usersRef.add({
+    await usersRef.doc(userCred.user!.uid).set({
       'email': email,
-      'password': password, //add hashing
       'createdAt': FieldValue.serverTimestamp(),
     });
-    return {true: "User created succesfully!"};
+
+    return {true: "User created successfully!"};
+  } on FirebaseAuthException catch (e) {
+    String msg;
+    if (e.code == 'email-already-in-use') {
+      msg = "Email already in use";
+    } else if (e.code == 'weak-password') {
+      msg = "Password is too weak";
+    } else if (e.code == 'invalid-email') {
+      msg = "Invalid email format";
+    } else {
+      msg = "Auth error: ${e.message}";
+    }
+    return {false: msg};
   } catch (e) {
-    print("Error adding user $e");
-    return {false: "Error $e"}; //Remove error message in prod
+    return {false: "Unexpected error: $e"};
   }
 }
 
