@@ -135,13 +135,21 @@ Future<User?> loginWithEmail(String email, String password) async {
         .signInWithEmailAndPassword(email: email, password: password);
     return userCredential.user;
   } on FirebaseAuthException catch (e) {
-    if (e.code == 'user-not-found') {
-      print("No user found for that email.");
-    } else if (e.code == 'wrong-password') {
-      print("Wrong password provided.");
-    } else {
-      print("Error logging in: ${e.code} - ${e.message}");
+    switch (e.code) {
+      case 'user-not-found':
+        print("No user found for that email.");
+        break;
+      case 'invalid-email':
+        print("Invalid e-mail provided.");
+        break;
+      case 'wrong-password':
+        print("Wrong password provided");
+      default:
+        print("Firebase error: ${e.code} - ${e.message}");
     }
+    return null;
+  } catch (e) {
+    print("Unexpected error: $e");
     return null;
   }
 }

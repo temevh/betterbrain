@@ -13,28 +13,13 @@ class _LoginScreenState extends State<LoginScreen> {
   String email = "";
   String password = "";
 
-  bool _loading = false;
-  String? _error;
-
   Future<void> _handleLogin() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+    try {
+      final user = await loginWithEmail(email, password);
 
-    final user = await loginWithEmail(email, password);
-
-    setState(() => _loading = false);
-
-    if (user != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Welcome ${user.email}!")));
-      Navigator.pushNamed(context, ('/'));
-    } else {
-      setState(() {
-        _error = "Login failed. Please check email/password.";
-      });
+      if (user != null) Navigator.pushNamed(context, '/');
+    } catch (e) {
+      print("Error in _handleLogin: $e");
     }
   }
 
