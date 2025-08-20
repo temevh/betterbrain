@@ -196,13 +196,10 @@ loginWithEmail(String email, String password) async {
   }
 }
 
-Future<User?> signInWithGoogle() async {
+Future<(User? user, bool isNewUser)> signInWithGoogle() async {
   try {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    if (googleUser == null) {
-      return null;
-    }
+    if (googleUser == null) return (null, false);
 
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
@@ -215,12 +212,13 @@ Future<User?> signInWithGoogle() async {
     final UserCredential userCredential = await FirebaseAuth.instance
         .signInWithCredential(credential);
 
-    return userCredential.user;
-  } on FirebaseAuthException catch (e) {
-    print("Firebase error $e");
-    return null;
+    final User? user = userCredential.user;
+    final bool isNewUser =
+        userCredential.additionalUserInfo?.isNewUser ?? false;
+
+    return (user, isNewUser);
   } catch (e) {
-    print("Unexpected error during Google login: $e");
-    return null;
+    print("Error signing in with Google: $e");
+    return (null, false);
   }
 }
