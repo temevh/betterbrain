@@ -12,10 +12,16 @@ Future<List<Map<String, dynamic>>> getAllTasks() async {
   return taskSnapshot.docs.map((doc) => doc.data()).toList();
 }
 
-//Select a random task from the fetched list
-Map<String, dynamic>? getRandomTask(List<Map<String, dynamic>> tasks) {
-  if (tasks.isEmpty) return null;
-  return tasks[Random().nextInt(tasks.length)];
+//Get a task with the correct category
+Future<Map<String, dynamic>> getRandomTask(String category) async {
+  final taskSnapshot = await db
+      .collection("tasks")
+      .where("category", isEqualTo: category)
+      .get();
+  final allTasks = taskSnapshot.docs.map((doc) => doc.data()).toList();
+  var random = Random();
+  final randomTask = allTasks[random.nextInt(allTasks.length)];
+  return randomTask;
 }
 
 //Fetch user data by email (change to auth later)
@@ -246,4 +252,25 @@ Future<bool> userHasStats(User user) async {
 
   final data = doc.data();
   return data != null && data.containsKey('stats');
+}
+
+Future<Map<String, double>> getUserStats(User user) async {
+  final doc = await FirebaseFirestore.instance
+      .collection("users")
+      .doc(user.uid)
+      .get();
+  if (!doc.exists) {
+    return {};
+  }
+
+  final data = doc.data();
+  if (data == null || !data.containsKey('stats')) {
+    return {};
+  }
+
+  final stats = data['stats'];
+  if (stats is Map<String, dynamic>) {
+    return stats.map((key, value) => MapEntry(key, (value as num).toDouble()));
+  }
+  return {};
 }

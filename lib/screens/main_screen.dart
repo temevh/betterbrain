@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/services/database_service.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
+import 'dart:math';
 //import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,19 +17,17 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late bool _completed;
-  final db = FirebaseFirestore.instance;
   late dynamic pastEvents;
-  dynamic userData;
+  String? _userId;
 
-  Map<String, dynamic>? _currentTask;
-  String randomTask = "";
-  dynamic userEvents;
+  Map<String, String> task = {};
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
     _completed = widget.isCompleted;
-    _loadRandomTask();
+    _setDailyTask();
 
     if (_completed) {
       Future.delayed(const Duration(seconds: 10), () {
@@ -40,46 +38,47 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  String? _userId;
-
-  Future<void> _loadRandomTask() async {
-    final tasks = await getAllTasks();
-    final selectedTask = getRandomTask(tasks);
-    print("SelectedTask: $selectedTask");
-    if (selectedTask == null) return;
-
+  Future<void> _setDailyTask() async {
     final User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null || currentUser.email == null) {
       //Change to use local storage if user is guest
       print("No logged-in user or user has no email");
+      setState(() => _loading = false);
       return;
     }
+    // select random user category/stat
+    final userTasks = await getUserStats(currentUser);
+    print("userTasks $userTasks");
 
-    final userData = await getUserByEmail(currentUser.email!);
-    print("userData: $userData");
-    if (userData == null) return;
+    var random = Random();
+    var entriesList = userTasks.entries.toList();
 
-    _userId = userData['id']; // store for later
+    //Select a random stat to be used
+    String randomStat = entriesList[random.nextInt(entriesList.length)].key;
+    double? statValue = userTasks[randomStat];
+    print("randomStat $randomStat, value $statValue");
 
-    final taskCategory = selectedTask['category'];
-    print("taskCategory: $taskCategory");
-
-    // If stats don’t exist yet, provide defaults
-    final userStats = Map<String, dynamic>.from(userData['stats'] ?? {});
-    final difficulty = applyStats(userStats, taskCategory);
-
-    final templateTask = selectedTask['task'] ?? '';
-    final compiledTask = templateTask.replaceAll('§', difficulty.toString());
+    //Select a random task from the category/stat
+    final randomTask = await getRandomTask(randomStat);
+    String taskText = randomTask["task"];
+    print("taskText $taskText");
+    // Replace the § with the digit
+    String compiledTask = taskText.replaceAll(
+      '§',
+      (statValue ?? 0).toInt().toString(),
+    );
     print("compiledTask: $compiledTask");
-
+    //save and serve task
     setState(() {
-      _currentTask = {"task": compiledTask, "category": taskCategory};
+      task = {"task": compiledTask, "category": randomStat};
+      _loading = false;
     });
+    print("task $task");
   }
 
   void _logOutPressed() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushNamed(context, '/start');
+    Navigator.pushReplacementNamed(context, '/start');
   }
 
   @override
@@ -228,12 +227,17 @@ class _MainScreenState extends State<MainScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (_currentTask != null && _currentTask!.isNotEmpty) ...[
-                TaskBox(taskData: _currentTask),
+              if (_loading) ...[
+                const Padding(
+                  padding: EdgeInsets.all(50.0),
+                  child: CircularProgressIndicator(),
+                ),
+              ] else ...[
+                if (task.isNotEmpty) TaskBox(taskData: task),
+                const SizedBox(height: 10),
+                const SizedBox(height: 20),
+                if (!_completed) SuccessBtn(taskData: task),
               ],
-              const SizedBox(height: 10),
-              const SizedBox(height: 20),
-              if (!_completed) ...[SuccessBtn(taskData: _currentTask)],
             ],
           ),
         ),
