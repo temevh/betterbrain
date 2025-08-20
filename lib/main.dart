@@ -2,13 +2,23 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:namer_app/services/database_service.dart';
 import 'routes.dart';
 
 void main() async {
+  String initialRoute = '/start';
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final User? currentUser = FirebaseAuth.instance.currentUser;
-  final String initialRoute = currentUser == null ? '/start' : '/';
+  print("CurrentUser $currentUser");
+  if (currentUser != null) {
+    if (await userHasStats(currentUser)) {
+      initialRoute = '/';
+    } else {
+      initialRoute = '/categorySelection';
+    }
+  }
+
   runApp(MyApp(initialRoute: initialRoute));
 }
 

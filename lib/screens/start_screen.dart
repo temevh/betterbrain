@@ -10,13 +10,15 @@ class StartScreen extends StatefulWidget {
 }
 
 void _googleLogIn(BuildContext context) async {
-  final (user, isNewUser) = await signInWithGoogle();
+  final user = await signInWithGoogle();
   if (user != null) {
     print("Logged in with Google: ${user.email}");
-    if (isNewUser) {
-      Navigator.pushReplacementNamed(context, ('/categorySelection'));
+
+    final hasStats = await userHasStats(user);
+    if (hasStats) {
+      Navigator.pushReplacementNamed(context, '/');
     } else {
-      Navigator.pushReplacementNamed(context, ('/'));
+      Navigator.pushReplacementNamed(context, '/categorySelection');
     }
   } else {
     print("Google login failed or cancelled");

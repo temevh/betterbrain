@@ -48,18 +48,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   void _savePressed() async {
-    Map<bool, String> addStatus = await createAccount(email, password);
+    final result = await createAccount(email, password);
 
-    if (addStatus.keys.first) {
+    if (result.success && result.user != null) {
       errorCreating = false;
       // Success → navigate
-      Navigator.pushNamed(context, '/categorySelection');
+      Navigator.pushReplacementNamed(context, '/categorySelection');
     } else {
       setState(() {
         errorCreating = true;
       });
     }
-    message = addStatus.values.first;
+    message = result.message;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
