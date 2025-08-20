@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/services/database_service.dart';
 import '../widgets/task_box.dart';
@@ -18,13 +17,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late bool _completed;
-  final db = FirebaseFirestore.instance;
   late dynamic pastEvents;
-  dynamic userData;
+  String? _userId;
 
-  Map<String, dynamic>? _currentTask;
-  String randomTask = "";
-  dynamic userEvents;
+  Map<String, String> task = {};
+  bool _loading = true;
 
   @override
   void initState() {
@@ -41,13 +38,12 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  String? _userId;
-
   Future<void> _setDailyTask() async {
     final User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null || currentUser.email == null) {
       //Change to use local storage if user is guest
       print("No logged-in user or user has no email");
+      setState(() => _loading = false);
       return;
     }
     // select random user category/stat
@@ -63,8 +59,8 @@ class _MainScreenState extends State<MainScreen> {
     print("randomStat $randomStat, value $statValue");
 
     //Select a random task from the category/stat
-    Map<String, dynamic> task = await getRandomTask(randomStat);
-    String taskText = task["task"];
+    final randomTask = await getRandomTask(randomStat);
+    String taskText = randomTask["task"];
     print("taskText $taskText");
     // Replace the § with the digit
     String compiledTask = taskText.replaceAll(
@@ -73,6 +69,11 @@ class _MainScreenState extends State<MainScreen> {
     );
     print("compiledTask: $compiledTask");
     //save and serve task
+    setState(() {
+      task = {"task": compiledTask, "category": randomStat};
+      _loading = false;
+    });
+    print("task $task");
   }
 
   void _logOutPressed() async {
@@ -226,12 +227,17 @@ class _MainScreenState extends State<MainScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (_currentTask != null && _currentTask!.isNotEmpty) ...[
-                TaskBox(taskData: _currentTask),
+              if (_loading) ...[
+                const Padding(
+                  padding: EdgeInsets.all(50.0),
+                  child: CircularProgressIndicator(),
+                ),
+              ] else ...[
+                if (task.isNotEmpty) TaskBox(taskData: task),
+                const SizedBox(height: 10),
+                const SizedBox(height: 20),
+                if (!_completed) SuccessBtn(taskData: task),
               ],
-              const SizedBox(height: 10),
-              const SizedBox(height: 20),
-              if (!_completed) ...[SuccessBtn(taskData: _currentTask)],
             ],
           ),
         ),
