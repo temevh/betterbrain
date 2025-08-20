@@ -20,8 +20,15 @@ class _LoginScreenState extends State<LoginScreen> {
       final result = await loginWithEmail(email, password);
 
       if (result.success && result.user != null) {
+        final user = result.user!;
+        final hasStats = await userHasStats(user);
+
         if (!mounted) return;
-        Navigator.pushNamed(context, '/');
+        if (hasStats) {
+          Navigator.pushReplacementNamed(context, '/');
+        } else {
+          Navigator.pushReplacementNamed(context, '/categorySelection');
+        }
       } else {
         if (!mounted) return;
         setState(() => errorMessage = result.message);

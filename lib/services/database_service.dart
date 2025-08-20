@@ -77,22 +77,28 @@ Future<bool> saveTask(
   }
 }
 
-Future<Map<bool, String>> createAccount(String email, String password) async {
+Future<({bool success, User? user, String code, String message})> createAccount(
+  String email,
+  String password,
+) async {
   try {
-    // Create account in Firebase Auth
     UserCredential userCred = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
 
-    // Save extra info in Firestore (not password!)
     final usersRef = FirebaseFirestore.instance.collection("users");
     await usersRef.doc(userCred.user!.uid).set({
       'email': email,
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    return {true: "User created successfully!"};
+    return (
+      success: true,
+      user: userCred.user,
+      code: 'ok',
+      message: 'Logged in successfully.',
+    );
   } on FirebaseAuthException catch (e) {
     String msg;
     if (e.code == 'email-already-in-use') {
@@ -104,9 +110,14 @@ Future<Map<bool, String>> createAccount(String email, String password) async {
     } else {
       msg = "Auth error: ${e.message}";
     }
-    return {false: msg};
+    return (
+      success: false,
+      user: null,
+      code: 'error',
+      message: 'FirebaseAuthException $msg',
+    );
   } catch (e) {
-    return {false: "Unexpected error: $e"};
+    return (success: false, user: null, code: 'error', message: 'exception $e');
   }
 }
 
@@ -132,6 +143,8 @@ Future<bool> saveStats(Map<String, double> selections) async {
 Future<({bool success, User? user, String code, String message})>
 loginWithEmail(String email, String password) async {
   final trimmedEmail = email.trim();
+  print("TrimmedEmail $trimmedEmail");
+  print("password $password");
 
   final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
   if (!emailRegex.hasMatch(trimmedEmail)) {
@@ -196,10 +209,10 @@ loginWithEmail(String email, String password) async {
   }
 }
 
-Future<(User? user, bool isNewUser)> signInWithGoogle() async {
+Future<User?> signInWithGoogle() async {
   try {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) return (null, false);
+    if (googleUser == null) return (null);
 
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
@@ -213,12 +226,24 @@ Future<(User? user, bool isNewUser)> signInWithGoogle() async {
         .signInWithCredential(credential);
 
     final User? user = userCredential.user;
-    final bool isNewUser =
-        userCredential.additionalUserInfo?.isNewUser ?? false;
 
-    return (user, isNewUser);
+    return user;
   } catch (e) {
     print("Error signing in with Google: $e");
-    return (null, false);
+    return (null);
   }
+}
+
+Future<bool> userHasStats(User user) async {
+  final doc = await FirebaseFirestore.instance
+      .collection("users")
+      .doc(user.uid)
+      .get();
+
+  if (!doc.exists) {
+    return false;
+  }
+
+  final data = doc.data();
+  return data != null && data.containsKey('stats');
 }
