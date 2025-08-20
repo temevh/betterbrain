@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:namer_app/services/database_service.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
 
   @override
   State<StartScreen> createState() => _StartScreenState();
+}
+
+void _googleLogIn(BuildContext context) async {
+  final (user, isNewUser) = await signInWithGoogle();
+  if (user != null) {
+    print("Logged in with Google: ${user.email}");
+    if (isNewUser) {
+      Navigator.pushReplacementNamed(context, ('/categorySelection'));
+    } else {
+      Navigator.pushReplacementNamed(context, ('/'));
+    }
+  } else {
+    print("Google login failed or cancelled");
+  }
 }
 
 class _StartScreenState extends State<StartScreen> {
@@ -65,7 +80,7 @@ class _StartScreenState extends State<StartScreen> {
                         FontAwesomeIcons.google,
                         color: Colors.red,
                       ),
-                      onPressed: () {},
+                      onPressed: () => _googleLogIn(context),
                     ),
                     /* 
                     const SizedBox(height: 12),

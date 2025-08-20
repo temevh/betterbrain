@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:math';
 
 final db = FirebaseFirestore.instance;
@@ -145,7 +146,6 @@ loginWithEmail(String email, String password) async {
   try {
     final UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: trimmedEmail, password: password);
-
     return (
       success: true,
       user: userCredential.user,
@@ -193,5 +193,32 @@ loginWithEmail(String email, String password) async {
       code: 'unexpected-error',
       message: 'Unexpected error: $e',
     );
+  }
+}
+
+Future<(User? user, bool isNewUser)> signInWithGoogle() async {
+  try {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return (null, false);
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final UserCredential userCredential = await FirebaseAuth.instance
+        .signInWithCredential(credential);
+
+    final User? user = userCredential.user;
+    final bool isNewUser =
+        userCredential.additionalUserInfo?.isNewUser ?? false;
+
+    return (user, isNewUser);
+  } catch (e) {
+    print("Error signing in with Google: $e");
+    return (null, false);
   }
 }
