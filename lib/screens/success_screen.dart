@@ -16,18 +16,6 @@ class SuccessScreen extends StatefulWidget {
 class _SuccessScreenState extends State<SuccessScreen> {
   int? selectedFeedback;
   String reflectionText = "";
-  Map<String, dynamic>? args;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        args =
-            ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      });
-    });
-  }
 
   void _onFeedbackSelected(int feedback) {
     setState(() {
@@ -41,27 +29,32 @@ class _SuccessScreenState extends State<SuccessScreen> {
     });
   }
 
-  void _onSavePressed() {
-    if (args != null) {
-      saveTask(
-        args,
-        "5QY7xynBreMil6jwDd9h",
+  void _onSavePressed() async {
+    if (widget.taskData != null) {
+      bool success = await saveUserTask(
+        widget.taskData!,
         selectedFeedback ?? 0,
         reflectionText,
       );
-    } else {
-      print("No task data to save");
+
+      if (success) {
+        Navigator.pop(context, true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to save task. Try again.")),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (args == null) {
+    if (widget.taskData == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final task = args?['task'] ?? 'Unknown task';
-    final category = args?['category'] ?? 'Unknown category';
+    final task = widget.taskData?['task'] ?? 'Unknown task';
+    final category = widget.taskData?['category'] ?? 'Unknown category';
 
     return Scaffold(
       body: SafeArea(
@@ -89,7 +82,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black,
-                            offset: const Offset(8, 10),
+                            offset: Offset(8, 10),
                             blurRadius: 0,
                           ),
                         ],
@@ -109,6 +102,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
+                    // Category chip
                     Opacity(
                       opacity: 0.8,
                       child: Container(
@@ -145,6 +139,8 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 20),
+
                     const SizedBox(height: 20),
                     FeedbackRow(
                       selectedFeedback: selectedFeedback,

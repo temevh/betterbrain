@@ -1,9 +1,9 @@
+// success_btn.dart
 import 'package:flutter/material.dart';
-import '../screens/main_screen.dart';
 
 class SuccessBtn extends StatefulWidget {
-  final Map<String, dynamic>? taskData;
-  const SuccessBtn({super.key, this.taskData});
+  final VoidCallback onPressed;
+  const SuccessBtn({super.key, required this.onPressed});
 
   @override
   State<SuccessBtn> createState() => _SuccessBtnState();
@@ -17,36 +17,17 @@ class _SuccessBtnState extends State<SuccessBtn> {
     return SizedBox(
       width: 350,
       child: GestureDetector(
-        onTapDown: (_) {
-          setState(() => _isPressed = true);
-        },
-        onTapUp: (_) async {
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) {
           setState(() => _isPressed = false);
-
-          final result = await Navigator.pushNamed(
-            context,
-            '/success',
-            arguments: widget.taskData,
-          );
-
-          if (result == true) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const MainScreen(isCompleted: true),
-              ),
-            );
-          }
+          widget.onPressed();
         },
-        onTapCancel: () {
-          setState(() => _isPressed = false);
-          print(widget.taskData);
-        },
+        onTapCancel: () => setState(() => _isPressed = false),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),
           padding: const EdgeInsets.all(8),
           transform: Matrix4.translationValues(
-            _isPressed ? 4 : 0, // move down when pressed
+            _isPressed ? 4 : 0,
             _isPressed ? 5 : 0,
             0,
           ),
@@ -61,10 +42,10 @@ class _SuccessBtnState extends State<SuccessBtn> {
               ),
             ],
           ),
-          child: Center(
+          child: const Center(
             child: Text(
               "Mark completed",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 32,
                 color: Colors.green,
                 fontWeight: FontWeight.bold,

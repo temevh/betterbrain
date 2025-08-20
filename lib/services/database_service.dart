@@ -83,6 +83,42 @@ Future<bool> saveTask(
   }
 }
 
+Future<bool> saveUserTask(
+  Map<String, dynamic> task,
+  int difficulty,
+  String reflection,
+) async {
+  final date = DateTime.now();
+  final User? currentUser = FirebaseAuth.instance.currentUser;
+
+  if (currentUser == null) {
+    print("No logged-in user");
+    return false;
+  }
+
+  try {
+    await db
+        .collection("users")
+        .doc(currentUser.uid)
+        .collection("tasks")
+        .doc()
+        .set({
+          "date": Timestamp.fromDate(date),
+          "taskText": task['task'],
+          "category": task['category'],
+          "difficulty": difficulty,
+          "reflection": reflection,
+          "isCompleted": true,
+          "createdAt": FieldValue.serverTimestamp(),
+        });
+
+    return true;
+  } catch (e) {
+    print("Error saving task: $e");
+    return false;
+  }
+}
+
 Future<({bool success, User? user, String code, String message})> createAccount(
   String email,
   String password,

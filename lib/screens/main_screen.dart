@@ -236,7 +236,32 @@ class _MainScreenState extends State<MainScreen> {
                 if (task.isNotEmpty) TaskBox(taskData: task),
                 const SizedBox(height: 10),
                 const SizedBox(height: 20),
-                if (!_completed) SuccessBtn(taskData: task),
+                if (!_completed)
+                  SuccessBtn(
+                    onPressed: () async {
+                      print("Success");
+                      final result = await Navigator.pushNamed(
+                        context,
+                        '/success',
+                        arguments: task,
+                      );
+
+                      if (result == true) {
+                        setState(() {
+                          _completed = true;
+                        });
+
+                        // Reset green background after 10 seconds (you already had this in initState)
+                        Future.delayed(const Duration(seconds: 10), () {
+                          if (mounted) {
+                            setState(() {
+                              _completed = false;
+                            });
+                          }
+                        });
+                      }
+                    },
+                  ),
               ],
             ],
           ),
