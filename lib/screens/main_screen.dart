@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/services/database_service.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
+import 'dart:math';
 //import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _completed = widget.isCompleted;
-    _loadRandomTask();
+    _setDailyTask();
 
     if (_completed) {
       Future.delayed(const Duration(seconds: 10), () {
@@ -42,44 +43,41 @@ class _MainScreenState extends State<MainScreen> {
 
   String? _userId;
 
-  Future<void> _loadRandomTask() async {
-    final tasks = await getAllTasks();
-    final selectedTask = getRandomTask(tasks);
-    print("SelectedTask: $selectedTask");
-    if (selectedTask == null) return;
-
+  Future<void> _setDailyTask() async {
     final User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null || currentUser.email == null) {
       //Change to use local storage if user is guest
       print("No logged-in user or user has no email");
       return;
     }
+    // select random user category/stat
+    final userTasks = await getUserStats(currentUser);
+    print("userTasks $userTasks");
 
-    final userData = await getUserByEmail(currentUser.email!);
-    print("userData: $userData");
-    if (userData == null) return;
+    var random = Random();
+    var entriesList = userTasks.entries.toList();
 
-    _userId = userData['id']; // store for later
+    //Select a random stat to be used
+    String randomStat = entriesList[random.nextInt(entriesList.length)].key;
+    double? statValue = userTasks[randomStat];
+    print("randomStat $randomStat, value $statValue");
 
-    final taskCategory = selectedTask['category'];
-    print("taskCategory: $taskCategory");
-
-    // If stats don’t exist yet, provide defaults
-    final userStats = Map<String, dynamic>.from(userData['stats'] ?? {});
-    final difficulty = applyStats(userStats, taskCategory);
-
-    final templateTask = selectedTask['task'] ?? '';
-    final compiledTask = templateTask.replaceAll('§', difficulty.toString());
+    //Select a random task from the category/stat
+    Map<String, dynamic> task = await getRandomTask(randomStat);
+    String taskText = task["task"];
+    print("taskText $taskText");
+    // Replace the § with the digit
+    String compiledTask = taskText.replaceAll(
+      '§',
+      (statValue ?? 0).toInt().toString(),
+    );
     print("compiledTask: $compiledTask");
-
-    setState(() {
-      _currentTask = {"task": compiledTask, "category": taskCategory};
-    });
+    //save and serve task
   }
 
   void _logOutPressed() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushNamed(context, '/start');
+    Navigator.pushReplacementNamed(context, '/start');
   }
 
   @override
