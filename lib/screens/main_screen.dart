@@ -29,8 +29,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _initialize() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-
     try {
       final task = await getDailyTask(DateTime.now());
       if (task != null) {
@@ -84,6 +82,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void _logOutPressed() async {
     await FirebaseAuth.instance.signOut();
+    if (!mounted) return;
     Navigator.pushReplacementNamed(context, '/start');
   }
 
@@ -222,6 +221,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     onTap: () async {
                       final events = await getUserEvents();
+                      if (!mounted) return;
                       Navigator.pushNamed(
                         context,
                         '/calendar',

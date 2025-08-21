@@ -84,7 +84,7 @@ class _FeedbackButton extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isSelected
-                  ? Colors.greenAccent.withOpacity(0.2)
+                  ? Colors.greenAccent.withAlpha((0.2 * 255).toInt())
                   : Colors.grey[900],
               border: isSelected
                   ? Border.all(color: Colors.greenAccent, width: 3)

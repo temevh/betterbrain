@@ -50,6 +50,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   void _savePressed() async {
     final result = await createAccount(email, password);
 
+    if (!mounted) return;
     if (result.success && result.user != null) {
       errorCreating = false;
       // Success → navigate
@@ -170,11 +171,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
-              ...passwordValidity.entries
-                  .map(
-                    (element) => _passwordValidity(element.key, element.value),
-                  )
-                  .toList(),
+              ...passwordValidity.entries.map(
+                (element) => _passwordValidity(element.key, element.value),
+              ),
 
               const Spacer(),
 
@@ -183,7 +182,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: Handle sign-up
                     passwordValidity.containsValue(false)
                         ? null
                         : _savePressed();

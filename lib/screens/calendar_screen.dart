@@ -78,13 +78,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         shape: BoxShape.circle,
         border: isSelected ? Border.all(width: 2, color: Colors.white) : null,
         boxShadow: bg != Colors.transparent
-            ? [
-                BoxShadow(
-                  color: bg.withOpacity(0.4),
-                  blurRadius: 6,
-                  spreadRadius: 1,
-                ),
-              ]
+            ? [BoxShadow(color: bg, blurRadius: 6, spreadRadius: 1)]
             : [],
       ),
       child: Text(

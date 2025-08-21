@@ -125,7 +125,7 @@ Future<({bool success, User? user, String code, String message})> createAccount(
       success: true,
       user: userCred.user,
       code: 'ok',
-      message: 'Logged in successfully.',
+      message: 'Signed up successfully.',
     );
   } on FirebaseAuthException catch (e) {
     String msg;
@@ -200,28 +200,20 @@ loginWithEmail(String email, String password) async {
     switch (code) {
       case 'invalid-email':
         message = 'The email address is badly formatted.';
-        break;
       case 'user-disabled':
         message = 'This user account has been disabled.';
-        break;
       case 'user-not-found':
         message = 'No user found with this email.';
-        break;
       case 'wrong-password': // old Firebase SDKs
         message = 'Invalid email or password.';
-        break;
       case 'invalid-credential': // new Firebase SDKs
         message = 'Invalid email or password.';
-        break;
       case 'too-many-requests':
         message = 'Too many attempts. Try again later.';
-        break;
       case 'operation-not-allowed':
         message = 'Email/password accounts are not enabled.';
-        break;
       case 'network-request-failed':
         message = 'Network error. Check your internet connection.';
-        break;
       default:
         message = 'Error logging in';
     }
