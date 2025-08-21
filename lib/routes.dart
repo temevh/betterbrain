@@ -9,7 +9,12 @@ import 'package:namer_app/screens/confidence_screen.dart';
 import 'package:namer_app/screens/login_screen.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
-  '/': (context) => const MainScreen(),
+  '/': (context) {
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final isCompleted = args?['isCompleted'] ?? false;
+    return MainScreen(isCompleted: isCompleted);
+  },
   '/success': (context) {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;

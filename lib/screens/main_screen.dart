@@ -241,25 +241,7 @@ class _MainScreenState extends State<MainScreen> {
                   SuccessBtn(
                     onPressed: () async {
                       print("Success");
-                      final result = await Navigator.pushNamed(
-                        context,
-                        '/success',
-                        arguments: task,
-                      );
-
-                      if (result == true) {
-                        setState(() {
-                          _completed = true;
-                        });
-
-                        Future.delayed(const Duration(seconds: 10), () {
-                          if (mounted) {
-                            setState(() {
-                              _completed = false;
-                            });
-                          }
-                        });
-                      }
+                      Navigator.pushNamed(context, '/success', arguments: task);
                     },
                   ),
               ],

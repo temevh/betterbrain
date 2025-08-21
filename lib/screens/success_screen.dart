@@ -38,7 +38,12 @@ class _SuccessScreenState extends State<SuccessScreen> {
       );
 
       if (success) {
-        Navigator.pop(context, true);
+        // Navigate to main screen with isCompleted = true instead of popping back
+        Navigator.pushReplacementNamed(
+          context,
+          '/',
+          arguments: {'isCompleted': true},
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to save task. Try again.")),
