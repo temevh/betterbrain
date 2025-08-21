@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/services/database_service.dart';
 import '../widgets/task_box.dart';
-import '../buttons/success_btn.dart';
+import '../buttons/shadow_btn.dart';
 import 'dart:math';
 import 'package:namer_app/widgets/countdown.dart';
 import 'package:namer_app/models/task.dart';
@@ -124,7 +124,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     const SizedBox(height: 30),
                     if (!_todayTask!.isCompleted)
-                      SuccessBtn(
+                      ShadowBtn(
                         onPressed: () {
                           Navigator.pushNamed(
                             context,
@@ -135,6 +135,7 @@ class _MainScreenState extends State<MainScreen> {
                             },
                           );
                         },
+                        btnText: "Mark completed",
                       )
                     else ...[
                       const Text(

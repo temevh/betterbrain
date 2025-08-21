@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/services/database_service.dart';
 import 'package:namer_app/widgets/build_input_field.dart';
-import 'package:namer_app/widgets/flat_btn.dart';
+import 'package:namer_app/buttons/flat_btn.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -11,7 +11,6 @@ class CreateAccountScreen extends StatefulWidget {
 }
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
-  bool _isPressed = false;
   String email = "";
   String password = "";
   String passwordVerify = "";
