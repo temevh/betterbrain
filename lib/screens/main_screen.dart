@@ -92,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2B2726),
+        backgroundColor: isCompleted ? Colors.green : const Color(0xFF2B2726),
         leading: Builder(
           builder: (context) {
             return IconButton(
@@ -140,15 +140,15 @@ class _MainScreenState extends State<MainScreen> {
                       const Text(
                         "Well done! 👍",
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 30),
                       const Text(
-                        "Come back in",
+                        "New task in",
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

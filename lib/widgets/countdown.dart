@@ -45,7 +45,7 @@ class _CountDownState extends State<CountDown> {
       "${hours.toString().padLeft(2, '0')}:"
       "${minutes.toString().padLeft(2, '0')}:"
       "${seconds.toString().padLeft(2, '0')}",
-      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
     );
   }
 }
