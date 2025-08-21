@@ -34,7 +34,8 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
               height: 60,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: getCategoryColor(category).withOpacity(0.25),
+                // ignore: deprecated_member_use
+                color: getCategoryColor(category).withOpacity(0.3),
                 borderRadius: BorderRadius.circular(50),
                 border: Border.all(
                   color: getCategoryColor(category),

@@ -29,8 +29,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _initialize() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-
     try {
       final task = await getDailyTask(DateTime.now());
       if (task != null) {

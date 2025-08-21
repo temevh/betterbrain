@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
-import 'package:namer_app/utils/category_utils.dart';
+import 'package:namer_app/widgets/category_pill.dart';
 
 class TaskBox extends StatefulWidget {
   final Map<String, dynamic>? taskData;
@@ -51,13 +50,16 @@ class _TaskBoxState extends State<TaskBox> {
                   style: const TextStyle(color: Colors.white, fontSize: 22),
                 ),
               ),
-              SizedBox(
-                width: 340,
-                child: Divider(
-                  thickness: 3,
-                  color: Colors.white.withOpacity(0.2),
-                  indent: 50,
-                  endIndent: 50,
+              Opacity(
+                opacity: 0.2,
+                child: SizedBox(
+                  width: 340,
+                  child: Divider(
+                    thickness: 3,
+                    color: Colors.white,
+                    indent: 50,
+                    endIndent: 50,
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -74,39 +76,7 @@ class _TaskBoxState extends State<TaskBox> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: getCategoryColor(category).withOpacity(0.25),
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(
-                    color: getCategoryColor(category).withOpacity(0.4),
-                    width: 1.5,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      getCategoryIcon(category),
-                      size: 20,
-                      color: getCategoryColor(category),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      category,
-                      style: TextStyle(
-                        color: getCategoryColor(category),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              CategoryPill(category: category),
             ],
           ),
         ),

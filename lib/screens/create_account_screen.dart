@@ -183,7 +183,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: Handle sign-up
                     passwordValidity.containsValue(false)
                         ? null
                         : _savePressed();

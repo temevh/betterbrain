@@ -64,7 +64,7 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
             height: 40,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: getCategoryColor(category).withOpacity(0.25),
+              color: getCategoryColor(category).withAlpha((0.25 * 255).toInt()),
               borderRadius: BorderRadius.circular(50),
               border: Border.all(color: getCategoryColor(category), width: 1.5),
             ),
