@@ -4,6 +4,7 @@ import 'package:namer_app/services/database_service.dart';
 import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
 import 'dart:math';
+import 'package:namer_app/widgets/countdown.dart';
 //import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
@@ -29,9 +30,10 @@ class _MainScreenState extends State<MainScreen> {
     _completed = widget.isCompleted;
     _setDailyTask();
     print("INIT");
+    _completed = true;
     if (_completed) {
       print("completed");
-      Future.delayed(const Duration(seconds: 10), () {
+      Future.delayed(const Duration(seconds: 100000), () {
         setState(() {
           _completed = false;
         });
@@ -243,7 +245,17 @@ class _MainScreenState extends State<MainScreen> {
                       print("Success");
                       Navigator.pushNamed(context, '/success', arguments: task);
                     },
+                  )
+                else if (_completed)
+                  const Text(
+                    "Well done!",
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
+                const Text(
+                  "Come back in",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                CountDown(),
               ],
             ],
           ),

@@ -38,7 +38,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
       );
 
       if (success) {
-        // Navigate to main screen with isCompleted = true instead of popping back
         Navigator.pushReplacementNamed(
           context,
           '/',
