@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:namer_app/models/task.dart';
 import 'dart:math';
 
 final db = FirebaseFirestore.instance;
@@ -89,6 +90,7 @@ Future<bool> saveUserTask(
   String reflection,
 ) async {
   final date = DateTime.now();
+  final normalizedDate = DateTime(date.year, date.month, date.day);
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
   if (currentUser == null) {
@@ -103,7 +105,10 @@ Future<bool> saveUserTask(
         .collection("tasks")
         .doc()
         .set({
-          "date": Timestamp.fromDate(date),
+          "date": Timestamp.fromDate(normalizedDate),
+          "year": date.year,
+          "month": date.month,
+          "day": date.day,
           "taskText": task['task'],
           "category": task['category'],
           "difficulty": difficulty,
@@ -309,4 +314,41 @@ Future<Map<String, double>> getUserStats(User user) async {
     return stats.map((key, value) => MapEntry(key, (value as num).toDouble()));
   }
   return {};
+}
+
+Future<Task?> getDailyTask(DateTime today) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return null;
+
+  try {
+    final snapshot = await db
+        .collection("users")
+        .doc(user.uid)
+        .collection("tasks")
+        .where("year", isEqualTo: today.year)
+        .where("month", isEqualTo: today.month)
+        .where("day", isEqualTo: today.day)
+        .limit(1)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      final data = snapshot.docs.first.data();
+      return Task(
+        taskText: data["taskText"] ?? "",
+        category: data["category"] ?? "",
+        reflection: data["reflection"] ?? "",
+        isCompleted: data["isCompleted"] ?? false,
+        difficulty: data["difficulty"] ?? 0,
+        day: data["day"],
+        month: data["month"],
+        year: data["year"],
+        createdAt: data["createdAt"],
+        date: data["date"],
+      );
+    }
+    return null;
+  } catch (e) {
+    print("Error fetching task: $e");
+    return null;
+  }
 }

@@ -5,6 +5,8 @@ import '../widgets/task_box.dart';
 import '../buttons/success_btn.dart';
 import 'dart:math';
 import 'package:namer_app/widgets/countdown.dart';
+import 'package:namer_app/models/task.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 //import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,66 +19,69 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late bool _completed;
-  late dynamic pastEvents;
-  String? _userId;
-
-  Map<String, String> task = {};
+  Task? _todayTask;
   bool _loading = true;
+  String? _userId;
 
   @override
   void initState() {
     super.initState();
-    _completed = widget.isCompleted;
-    _setDailyTask();
-    print("INIT");
-    _completed = true;
-    if (_completed) {
-      print("completed");
-      Future.delayed(const Duration(seconds: 100000), () {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) _userId = user.uid;
+
+    try {
+      final task = await getDailyTask(DateTime.now());
+      if (task != null) {
         setState(() {
-          _completed = false;
+          _todayTask = task;
+          _loading = false;
         });
-      });
+      } else {
+        await _setDailyTask();
+      }
+    } catch (e) {
+      print("Error initializing main screen: $e");
+      setState(() => _loading = false);
     }
   }
 
   Future<void> _setDailyTask() async {
     final User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null || currentUser.email == null) {
-      //Change to use local storage if user is guest
-      print("No logged-in user or user has no email");
       setState(() => _loading = false);
       return;
     }
-    // select random user category/stat
-    final userTasks = await getUserStats(currentUser);
-    print("userTasks $userTasks");
 
+    final userStats = await getUserStats(currentUser);
     var random = Random();
-    var entriesList = userTasks.entries.toList();
-
-    //Select a random stat to be used
+    var entriesList = userStats.entries.toList();
     String randomStat = entriesList[random.nextInt(entriesList.length)].key;
-    double? statValue = userTasks[randomStat];
-    print("randomStat $randomStat, value $statValue");
-
-    //Select a random task from the category/stat
+    double? statValue = userStats[randomStat];
     final randomTask = await getRandomTask(randomStat);
-    String taskText = randomTask["task"];
-    print("taskText $taskText");
-    // Replace the § with the digit
-    String compiledTask = taskText.replaceAll(
+    String compiledTask = randomTask["task"].replaceAll(
       '§',
       (statValue ?? 0).toInt().toString(),
     );
-    print("compiledTask: $compiledTask");
-    //save and serve task
+
     setState(() {
-      task = {"task": compiledTask, "category": randomStat};
+      _todayTask = Task(
+        taskText: compiledTask,
+        category: randomStat,
+        reflection: "",
+        isCompleted: false,
+        difficulty: 1,
+        day: DateTime.now().day,
+        month: DateTime.now().month,
+        year: DateTime.now().year,
+        createdAt: Timestamp.now(),
+        date: Timestamp.fromDate(DateTime.now()),
+      );
       _loading = false;
     });
-    print("task $task");
   }
 
   void _logOutPressed() async {
@@ -86,6 +91,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isCompleted = _todayTask?.isCompleted ?? false;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF2B2726),
@@ -98,167 +105,173 @@ class _MainScreenState extends State<MainScreen> {
           },
         ),
       ),
-      drawer: Drawer(
-        child: Container(
-          color: const Color(0xFF2B2726),
-          child: Column(
-            children: [
-              // Main content scrollable
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 50,
-                    horizontal: 20,
-                  ),
-                  children: [
-                    // Optional header
-                    Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.green,
-                          child: Icon(
-                            Icons.person,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "John Doe",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "john@example.com",
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 40),
+      drawer: _buildDrawer(),
 
-                    // Menu items
-                    ListTile(
-                      leading: const Icon(
-                        Icons.calendar_today,
-                        color: Colors.green,
-                      ),
-                      title: const Text(
-                        'Calendar',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      onTap: () async {
-                        if (_userId != null) {
-                          final events = await getUserEvents(_userId!);
-                          Navigator.pushNamed(
-                            context,
-                            '/calendar',
-                            arguments: events,
-                          );
-                        } else {
-                          print("User ID not loaded yet");
-                        }
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      tileColor: Colors.white10,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    ListTile(
-                      leading: const Icon(Icons.settings, color: Colors.green),
-                      title: const Text(
-                        'Settings',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      onTap: () {},
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      tileColor: Colors.white10,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ListTile(
-                  leading: const Icon(Icons.logout, color: Colors.redAccent),
-                  title: const Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  onTap: () {
-                    // Handle logout
-                    _logOutPressed();
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  tileColor: Colors.white10,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-
-      backgroundColor: _completed ? Colors.green : const Color(0xFF2B2726),
+      backgroundColor: isCompleted ? Colors.green : const Color(0xFF2B2726),
       body: Center(
         child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if (_loading) ...[
-                const Padding(
+          child: _loading
+              ? const Padding(
                   padding: EdgeInsets.all(50.0),
                   child: CircularProgressIndicator(),
+                )
+              : _todayTask != null
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TaskBox(
+                      taskData: {
+                        "task": _todayTask!.taskText,
+                        "category": _todayTask!.category,
+                      },
+                    ),
+                    const SizedBox(height: 30),
+                    if (!_todayTask!.isCompleted)
+                      SuccessBtn(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/success',
+                            arguments: {
+                              "task": _todayTask!.taskText,
+                              "category": _todayTask!.category,
+                            },
+                          );
+                        },
+                      )
+                    else ...[
+                      const Text(
+                        "Well done! 👍",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Come back in",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      CountDown(), // Only shows if task is completed
+                    ],
+                  ],
+                )
+              : const Text("No task available"),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      child: Container(
+        color: const Color(0xFF2B2726),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 50,
+                  horizontal: 20,
                 ),
-              ] else ...[
-                if (task.isNotEmpty) TaskBox(taskData: task),
-                const SizedBox(height: 10),
-                const SizedBox(height: 20),
-                if (!_completed)
-                  SuccessBtn(
-                    onPressed: () async {
-                      print("Success");
-                      Navigator.pushNamed(context, '/success', arguments: task);
-                    },
-                  )
-                else if (_completed)
-                  const Text(
-                    "Well done!",
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                children: [
+                  Row(
+                    children: const [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.green,
+                        child: Icon(
+                          Icons.person,
+                          size: 30,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "John Doe",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "john@example.com",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                const Text(
-                  "Come back in",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 40),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.calendar_today,
+                      color: Colors.green,
+                    ),
+                    title: const Text(
+                      'Calendar',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    onTap: () async {
+                      if (_userId != null) {
+                        final events = await getUserEvents(_userId!);
+                        Navigator.pushNamed(
+                          context,
+                          '/calendar',
+                          arguments: events,
+                        );
+                      }
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    tileColor: Colors.white10,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                  ),
+                  const SizedBox(height: 10),
+                  ListTile(
+                    leading: const Icon(Icons.settings, color: Colors.green),
+                    title: const Text(
+                      'Settings',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    onTap: () {},
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    tileColor: Colors.white10,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListTile(
+                leading: const Icon(Icons.logout, color: Colors.redAccent),
+                title: const Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
-                CountDown(),
-              ],
-            ],
-          ),
+                onTap: _logOutPressed,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                tileColor: Colors.white10,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+              ),
+            ),
+          ],
         ),
       ),
     );
