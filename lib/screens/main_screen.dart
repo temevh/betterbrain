@@ -28,8 +28,9 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _completed = widget.isCompleted;
     _setDailyTask();
-
+    print("INIT");
     if (_completed) {
+      print("completed");
       Future.delayed(const Duration(seconds: 10), () {
         setState(() {
           _completed = false;
@@ -251,7 +252,6 @@ class _MainScreenState extends State<MainScreen> {
                           _completed = true;
                         });
 
-                        // Reset green background after 10 seconds (you already had this in initState)
                         Future.delayed(const Duration(seconds: 10), () {
                           if (mounted) {
                             setState(() {
