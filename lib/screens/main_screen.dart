@@ -21,7 +21,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   Task? _todayTask;
   bool _loading = true;
-  String? _userId;
 
   @override
   void initState() {
@@ -30,8 +29,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _initialize() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) _userId = user.uid;
+    final User? user = FirebaseAuth.instance.currentUser;
 
     try {
       final task = await getDailyTask(DateTime.now());
@@ -223,14 +221,12 @@ class _MainScreenState extends State<MainScreen> {
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     onTap: () async {
-                      if (_userId != null) {
-                        final events = await getUserEvents(_userId!);
-                        Navigator.pushNamed(
-                          context,
-                          '/calendar',
-                          arguments: events,
-                        );
-                      }
+                      final events = await getUserEvents();
+                      Navigator.pushNamed(
+                        context,
+                        '/calendar',
+                        arguments: events,
+                      );
                     },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

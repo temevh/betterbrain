@@ -25,65 +25,46 @@ Future<Map<String, dynamic>> getRandomTask(String category) async {
   return randomTask;
 }
 
-//Fetch user data by email (change to auth later)
-Future<Map<String, dynamic>?> getUserByEmail(String email) async {
-  final userQuery = await db
-      .collection("users")
-      .where("email", isEqualTo: email)
-      .limit(1)
-      .get();
-
-  if (userQuery.docs.isEmpty) return null;
-
-  return {"id": userQuery.docs.first.id, ...userQuery.docs.first.data()};
-}
-
-//Apply users stats to the task
-int applyStats(Map<String, dynamic> stats, String category) {
-  final stat = stats[category] ?? 3;
-  return stat.toInt() * 7;
-}
-
 //Fetch all past events for user
-Future<List<Map<String, dynamic>>> getUserEvents(String userId) async {
-  final eventSnapshot = await db
-      .collection("users")
-      .doc(userId)
-      .collection("calendar")
-      .get();
-  return eventSnapshot.docs.map((doc) => doc.data()).toList();
-}
+Future<List<Task>> getUserEvents() async {
+  final User? currentUser = FirebaseAuth.instance.currentUser;
 
-//Save completed task for user
-Future<bool> saveTask(
-  Map<String, dynamic>? event,
-  String userId,
-  int? difficultyArg,
-  String feedbackArg,
-) async {
+  if (currentUser == null) {
+    print("No logged-in user");
+    return [];
+  }
+
   try {
-    final eventObject = {
-      'category': event?['category'],
-      'title': event?['task'],
-      'isCompleted': true,
-      'difficulty': difficultyArg,
-      'feedback': feedbackArg,
-      'date': DateTime.now(),
-    };
-
-    await db
+    final eventSnapshot = await db
         .collection("users")
-        .doc(userId)
-        .collection("calendar")
-        .add(eventObject);
-    print("Saved event for $userId");
-    return true;
+        .doc(currentUser.uid)
+        .collection("tasks")
+        .get();
+
+    final events = eventSnapshot.docs.map((doc) {
+      final data = doc.data();
+      return Task(
+        taskText: data['taskText'] ?? '',
+        category: data['category'] ?? '',
+        reflection: data['reflection'] ?? '',
+        isCompleted: data['isCompleted'] ?? false,
+        difficulty: data['difficulty'] ?? 1,
+        day: data['day'] ?? 0,
+        month: data['month'] ?? 0,
+        year: data['year'] ?? 0,
+        createdAt: data['createdAt'] ?? Timestamp.now(),
+        date: data['date'] ?? Timestamp.now(),
+      );
+    }).toList();
+
+    return events;
   } catch (e) {
-    print("Error saving event: $e");
-    return false;
+    print("Error fetching user tasks: $e");
+    return [];
   }
 }
 
+//Save a task
 Future<bool> saveUserTask(
   Map<String, dynamic> task,
   int difficulty,

@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:namer_app/widgets/event_card_calendar.dart';
+import 'package:namer_app/models/task.dart';
 
 class Event {
   final String category;
@@ -9,6 +9,7 @@ class Event {
   final int difficulty;
   final bool isCompleted;
   final String title;
+
   Event({
     required this.category,
     required this.date,
@@ -28,65 +29,69 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  dynamic _events;
+  final Map<DateTime, Event> _events = {};
 
   DateTime _normalizeDate(DateTime date) =>
       DateTime(date.year, date.month, date.day);
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final userEvents = ModalRoute.of(context)!.settings.arguments as List;
-    _setEvents(userEvents);
+    final userTasks = ModalRoute.of(context)!.settings.arguments as List<Task>;
+    _setEvents(userTasks);
   }
 
-  Color _bgForDay(DateTime day) {
-    final events = _getEventsForDay(day);
-    if (events.isEmpty) return Colors.transparent;
-
-    final allCompleted = events.every((e) => e.isCompleted);
-    final allNotCompleted = events.every((e) => !e.isCompleted);
-
-    if (allCompleted) return Colors.green;
-    if (allNotCompleted) return Colors.red;
-    return Colors.orange; // mixed
-  }
-
-  Future<void> _setEvents(List userEvents) async {
-    final Map<DateTime, List<Event>> eventsMap = {};
-
-    for (var e in userEvents) {
-      final data = Map<String, dynamic>.from(e);
-
-      // Convert Firestore Timestamp to DateTime
-      final DateTime dateTime = data['date'] is Timestamp
-          ? (data['date'] as Timestamp).toDate()
-          : DateTime.tryParse(data['date'].toString()) ?? DateTime.now();
-
-      final event = Event(
-        category: data['category'] ?? '',
+  void _setEvents(List<Task> userTasks) {
+    final Map<DateTime, Event> eventsMap = {};
+    for (var task in userTasks) {
+      final dateTime = task.date.toDate();
+      eventsMap[_normalizeDate(dateTime)] = Event(
+        category: task.category,
         date: dateTime,
-        difficulty: data['difficulty'] ?? 0,
-        isCompleted: data['isCompleted'] ?? false,
-        title: data['title'] ?? '',
+        difficulty: task.difficulty,
+        isCompleted: task.isCompleted,
+        title: task.taskText,
       );
-
-      final dayKey = _normalizeDate(event.date);
-      eventsMap.putIfAbsent(dayKey, () => []).add(event);
     }
-
     setState(() {
-      _events = eventsMap;
+      _events.clear();
+      _events.addAll(eventsMap);
     });
   }
 
-  List<Event> _getEventsForDay(DateTime day) {
-    return _events[_normalizeDate(day)] ?? [];
+  Event? _getEventForDay(DateTime day) => _events[_normalizeDate(day)];
+
+  Color _bgForDay(DateTime day) {
+    final event = _getEventForDay(day);
+    if (event == null) return Colors.transparent;
+    return event.isCompleted ? Colors.green : Colors.red;
+  }
+
+  Widget _buildDayCell(DateTime day, bool isSelected) {
+    final bg = _bgForDay(day);
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.all(6),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: bg,
+        shape: BoxShape.circle,
+        border: isSelected ? Border.all(width: 2, color: Colors.white) : null,
+        boxShadow: bg != Colors.transparent
+            ? [
+                BoxShadow(
+                  color: bg.withOpacity(0.4),
+                  blurRadius: 6,
+                  spreadRadius: 1,
+                ),
+              ]
+            : [],
+      ),
+      child: Text(
+        '${day.day}',
+        style: const TextStyle(fontSize: 20, color: Colors.white),
+      ),
+    );
   }
 
   @override
@@ -106,122 +111,45 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 _focusedDay = focusedDay;
               });
             },
-            eventLoader: _getEventsForDay,
+            eventLoader: (day) {
+              final event = _getEventForDay(day);
+              return event != null ? [event] : [];
+            },
             calendarFormat: CalendarFormat.month,
-
-            // Ensure TableCalendar doesn't add its own "today" highlight
             calendarStyle: const CalendarStyle(isTodayHighlighted: false),
-
             headerStyle: const HeaderStyle(
               formatButtonVisible: false,
               titleCentered: true,
               titleTextStyle: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             calendarBuilders: CalendarBuilders(
               markerBuilder: (context, day, events) => const SizedBox(),
-
-              // Normal day
-              defaultBuilder: (context, day, focusedDay) {
-                final bg = _bgForDay(day);
-                if (bg == Colors.transparent) {
-                  return Center(
-                    child: Text(
-                      '${day.day}',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  );
-                }
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  decoration: BoxDecoration(
-                    color: bg,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: bg.withOpacity(0.4),
-                        blurRadius: 6,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  margin: const EdgeInsets.all(6),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '${day.day}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ), // see _DayText below
-                );
-              },
-
-              // Selected day (no special rule for today)
-              selectedBuilder: (context, day, focusedDay) {
-                final bg = _bgForDay(day);
-                return Container(
-                  decoration: BoxDecoration(
-                    color: bg,
-                    shape: BoxShape.circle,
-                    border: Border.all(width: 2, color: Colors.white),
-                  ),
-                  margin: const EdgeInsets.all(6),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '${day.day}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                );
-              },
-
-              // Make "today" behave like any other day with events
-              todayBuilder: (context, day, focusedDay) {
-                final bg = _bgForDay(day);
-                if (bg == Colors.transparent) {
-                  return Center(
-                    child: Text(
-                      '${day.day}',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  );
-                }
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  decoration: BoxDecoration(
-                    color: bg,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: bg.withOpacity(0.4),
-                        blurRadius: 6,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  margin: const EdgeInsets.all(6),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '${day.day}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                );
-              },
+              defaultBuilder: (context, day, focusedDay) =>
+                  _buildDayCell(day, false),
+              todayBuilder: (context, day, focusedDay) =>
+                  _buildDayCell(day, false),
+              selectedBuilder: (context, day, focusedDay) =>
+                  _buildDayCell(day, true),
             ),
           ),
 
+          // Event List for selected day
           Expanded(
             child: ListView(
-              children: _getEventsForDay(_selectedDay ?? _focusedDay).map((
-                event,
-              ) {
-                final dayEvents = _getEventsForDay(_selectedDay ?? _focusedDay);
-                return EventCard(
-                  event: event,
-                  selectedDate: _selectedDay ?? _focusedDay,
-                  dayEvents: dayEvents,
-                );
-              }).toList(),
+              children: _getEventForDay(_selectedDay ?? _focusedDay) != null
+                  ? [
+                      EventCard(
+                        event: _getEventForDay(_selectedDay ?? _focusedDay)!,
+                        selectedDate: _selectedDay ?? _focusedDay,
+                        dayEvents: [
+                          _getEventForDay(_selectedDay ?? _focusedDay)!,
+                        ],
+                      ),
+                    ]
+                  : [],
             ),
           ),
         ],
