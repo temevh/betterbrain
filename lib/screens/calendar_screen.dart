@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:namer_app/widgets/event_card_calendar.dart';
@@ -30,71 +29,46 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  final Map<DateTime, Event> _events = {};
 
-  Map<DateTime, List<Event>> _events = {};
-
-  // Normalize DateTime to remove time
   DateTime _normalizeDate(DateTime date) =>
       DateTime(date.year, date.month, date.day);
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     final userTasks = ModalRoute.of(context)!.settings.arguments as List<Task>;
     _setEvents(userTasks);
   }
 
   void _setEvents(List<Task> userTasks) {
-    final Map<DateTime, List<Event>> eventsMap = {};
-
+    final Map<DateTime, Event> eventsMap = {};
     for (var task in userTasks) {
       final dateTime = task.date.toDate();
-      final dayKey = _normalizeDate(dateTime);
-
-      final event = Event(
+      eventsMap[_normalizeDate(dateTime)] = Event(
         category: task.category,
         date: dateTime,
         difficulty: task.difficulty,
         isCompleted: task.isCompleted,
         title: task.taskText,
       );
-
-      eventsMap.putIfAbsent(dayKey, () => []).add(event);
     }
-
     setState(() {
-      _events = eventsMap;
+      _events.clear();
+      _events.addAll(eventsMap);
     });
   }
 
-  List<Event> _getEventsForDay(DateTime day) {
-    return _events[_normalizeDate(day)] ?? [];
-  }
+  Event? _getEventForDay(DateTime day) => _events[_normalizeDate(day)];
 
   Color _bgForDay(DateTime day) {
-    final events = _getEventsForDay(day);
-    if (events.isEmpty) return Colors.transparent;
-
-    final allCompleted = events.every((e) => e.isCompleted);
-    final allNotCompleted = events.every((e) => !e.isCompleted);
-
-    if (allCompleted) return Colors.green;
-    if (allNotCompleted) return Colors.red;
-    return Colors.orange; // mixed
+    final event = _getEventForDay(day);
+    if (event == null) return Colors.transparent;
+    return event.isCompleted ? Colors.green : Colors.red;
   }
 
-  Widget _buildDayCell(DateTime day, DateTime focusedDay, bool isSelected) {
+  Widget _buildDayCell(DateTime day, bool isSelected) {
     final bg = _bgForDay(day);
-    final text = Text(
-      '${day.day}',
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-        color: bg == Colors.transparent ? Colors.black : Colors.white,
-      ),
-    );
-
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       margin: const EdgeInsets.all(6),
@@ -113,7 +87,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ]
             : [],
       ),
-      child: text,
+      child: Text(
+        '${day.day}',
+        style: const TextStyle(fontSize: 20, color: Colors.white),
+      ),
     );
   }
 
@@ -134,39 +111,45 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 _focusedDay = focusedDay;
               });
             },
-            eventLoader: _getEventsForDay,
+            eventLoader: (day) {
+              final event = _getEventForDay(day);
+              return event != null ? [event] : [];
+            },
             calendarFormat: CalendarFormat.month,
             calendarStyle: const CalendarStyle(isTodayHighlighted: false),
             headerStyle: const HeaderStyle(
               formatButtonVisible: false,
               titleCentered: true,
               titleTextStyle: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
             calendarBuilders: CalendarBuilders(
+              markerBuilder: (context, day, events) => const SizedBox(),
               defaultBuilder: (context, day, focusedDay) =>
-                  _buildDayCell(day, focusedDay, false),
+                  _buildDayCell(day, false),
               todayBuilder: (context, day, focusedDay) =>
-                  _buildDayCell(day, focusedDay, false),
+                  _buildDayCell(day, false),
               selectedBuilder: (context, day, focusedDay) =>
-                  _buildDayCell(day, focusedDay, true),
+                  _buildDayCell(day, true),
             ),
           ),
 
-          // Event List
+          // Event List for selected day
           Expanded(
             child: ListView(
-              children: _getEventsForDay(_selectedDay ?? _focusedDay)
-                  .map(
-                    (event) => EventCard(
-                      event: event,
-                      selectedDate: _selectedDay ?? _focusedDay,
-                      dayEvents: _getEventsForDay(_selectedDay ?? _focusedDay),
-                    ),
-                  )
-                  .toList(),
+              children: _getEventForDay(_selectedDay ?? _focusedDay) != null
+                  ? [
+                      EventCard(
+                        event: _getEventForDay(_selectedDay ?? _focusedDay)!,
+                        selectedDate: _selectedDay ?? _focusedDay,
+                        dayEvents: [
+                          _getEventForDay(_selectedDay ?? _focusedDay)!,
+                        ],
+                      ),
+                    ]
+                  : [],
             ),
           ),
         ],
