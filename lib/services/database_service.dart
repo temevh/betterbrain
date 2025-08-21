@@ -125,7 +125,7 @@ Future<({bool success, User? user, String code, String message})> createAccount(
       success: true,
       user: userCred.user,
       code: 'ok',
-      message: 'Logged in successfully.',
+      message: 'Signed up successfully.',
     );
   } on FirebaseAuthException catch (e) {
     String msg;

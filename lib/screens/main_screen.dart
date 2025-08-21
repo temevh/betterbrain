@@ -82,6 +82,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void _logOutPressed() async {
     await FirebaseAuth.instance.signOut();
+    if (!mounted) return;
     Navigator.pushReplacementNamed(context, '/start');
   }
 
@@ -220,6 +221,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     onTap: () async {
                       final events = await getUserEvents();
+                      if (!mounted) return;
                       Navigator.pushNamed(
                         context,
                         '/calendar',

@@ -37,6 +37,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
         reflectionText,
       );
 
+      if (!mounted) return;
       if (success) {
         Navigator.pushReplacementNamed(
           context,

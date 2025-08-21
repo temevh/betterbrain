@@ -9,23 +9,32 @@ class StartScreen extends StatefulWidget {
   State<StartScreen> createState() => _StartScreenState();
 }
 
-void _googleLogIn(BuildContext context) async {
-  final user = await signInWithGoogle();
-  if (user != null) {
-    print("Logged in with Google: ${user.email}");
-
-    final hasStats = await userHasStats(user);
-    if (hasStats) {
-      Navigator.pushReplacementNamed(context, '/');
-    } else {
-      Navigator.pushReplacementNamed(context, '/categorySelection');
-    }
-  } else {
-    print("Google login failed or cancelled");
-  }
-}
-
 class _StartScreenState extends State<StartScreen> {
+  void _googleLogIn(BuildContext context) async {
+    final user = await signInWithGoogle();
+
+    if (user != null) {
+      print("Logged in with Google: ${user.email}");
+
+      if (!mounted) return;
+
+      // ignore: use_build_context_synchronously
+      final navigator = Navigator.of(context);
+
+      final hasStats = await userHasStats(user);
+
+      if (!mounted) return;
+
+      if (hasStats) {
+        navigator.pushReplacementNamed('/');
+      } else {
+        navigator.pushReplacementNamed('/categorySelection');
+      }
+    } else {
+      print("Google login failed or cancelled");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

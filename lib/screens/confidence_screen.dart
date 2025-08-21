@@ -35,10 +35,10 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
 
     print("Selected confidence: $selectedConfidence");
 
-    // Send to your database service
     final bool ok = await saveStats(selectedConfidence);
 
-    // Optionally navigate back
+    if (!mounted) return;
+
     if (ok) {
       Navigator.pushNamed(context, '/');
     } else {
