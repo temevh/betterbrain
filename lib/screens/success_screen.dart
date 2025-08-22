@@ -30,6 +30,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
   }
 
   void _onSavePressed() async {
+    print("Save pressed");
     if (widget.taskData != null) {
       bool success = await saveUserTask(
         widget.taskData!,
@@ -108,7 +109,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     ),
                     const SizedBox(height: 20),
                     // Category chip
-                    CategoryPill(category: category),
+                    CategoryPill(category: category, size: 20),
                     const SizedBox(height: 20),
 
                     const SizedBox(height: 20),

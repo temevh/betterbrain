@@ -6,38 +6,27 @@ import 'package:namer_app/widgets/category_pill.dart';
 class EventCard extends StatelessWidget {
   final Event event;
   final DateTime selectedDate;
-  final List<Event> dayEvents;
 
-  const EventCard({
-    super.key,
-    required this.event,
-    required this.selectedDate,
-    required this.dayEvents,
-  });
+  const EventCard({super.key, required this.event, required this.selectedDate});
 
   Color _getContainerColor() {
-    bool allCompleted = dayEvents.every((e) => e.isCompleted);
-    bool allNotCompleted = dayEvents.every((e) => !e.isCompleted);
-
-    if (allCompleted) {
+    if (event.isCompleted) {
       return Colors.green;
-    } else if (allNotCompleted) {
-      return Colors.red;
     } else {
-      return Colors.green;
+      return Colors.red;
     }
   }
 
-  String difficultyEmoji(int difficulty) {
+  String getDifficultyEmoji(int difficulty) {
     switch (difficulty) {
       case -1:
-        return "😓";
+        return "😓 Too hard";
       case 0:
-        return "🙂";
+        return "🙂 Just right";
       case 1:
-        return "😴";
+        return "😴 Too easy";
       default:
-        return "❓";
+        return "❓ unknown";
     }
   }
 
@@ -47,11 +36,11 @@ class EventCard extends StatelessWidget {
     final category = event.category.toUpperCase();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 20, 8, 20),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Center(
         child: Container(
-          width: 320,
-          padding: const EdgeInsets.all(16),
+          width: 350,
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(20),
@@ -68,14 +57,24 @@ class EventCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: containerColor,
-                  fontSize: 28,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
-              CategoryPill(category: category),
-              const SizedBox(height: 8),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
+              CategoryPill(category: category, size: 14),
+              const SizedBox(height: 10),
+              Text(
+                getDifficultyEmoji(event.difficulty),
+                style: TextStyle(color: Colors.black, fontSize: 20),
+              ),
+              SizedBox(height: 10),
+              Text(
+                event.reflection,
+                style: TextStyle(color: Colors.black, fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
               Opacity(
                 opacity: 0.7,
                 child: Text(

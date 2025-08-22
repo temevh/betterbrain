@@ -9,6 +9,7 @@ class Event {
   final int difficulty;
   final bool isCompleted;
   final String title;
+  final String reflection;
 
   Event({
     required this.category,
@@ -16,6 +17,7 @@ class Event {
     required this.difficulty,
     required this.isCompleted,
     required this.title,
+    required this.reflection,
   });
 }
 
@@ -51,6 +53,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         difficulty: task.difficulty,
         isCompleted: task.isCompleted,
         title: task.taskText,
+        reflection: task.reflection,
       );
     }
     setState(() {
@@ -138,9 +141,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       EventCard(
                         event: _getEventForDay(_selectedDay ?? _focusedDay)!,
                         selectedDate: _selectedDay ?? _focusedDay,
-                        dayEvents: [
-                          _getEventForDay(_selectedDay ?? _focusedDay)!,
-                        ],
                       ),
                     ]
                   : [],

@@ -76,7 +76,7 @@ class _TaskBoxState extends State<TaskBox> {
                 ),
               ),
               const SizedBox(height: 20),
-              CategoryPill(category: category),
+              CategoryPill(category: category, size: 20),
             ],
           ),
         ),
