@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:namer_app/widgets/countdown.dart';
 import 'package:namer_app/models/task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:namer_app/widgets/drawer_widget.dart';
 //import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
@@ -80,12 +81,6 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void _logOutPressed() async {
-    await FirebaseAuth.instance.signOut();
-    if (!mounted) return;
-    Navigator.pushReplacementNamed(context, '/start');
-  }
-
   @override
   Widget build(BuildContext context) {
     final isCompleted = _todayTask?.isCompleted ?? false;
@@ -102,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
           },
         ),
       ),
-      drawer: _buildDrawer(),
+      drawer: DrawerWidget(),
 
       backgroundColor: isCompleted ? Colors.green : const Color(0xFF2B2726),
       body: Center(
@@ -158,83 +153,6 @@ class _MainScreenState extends State<MainScreen> {
                   ],
                 )
               : const Text("No task available"),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawer() {
-    return Drawer(
-      child: Container(
-        color: const Color(0xFF2B2726),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 50,
-                  horizontal: 20,
-                ),
-                children: [
-                  const SizedBox(height: 40),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.calendar_today,
-                      color: Colors.green,
-                    ),
-                    title: const Text(
-                      'Calendar',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    onTap: () async {
-                      final events = await getUserEvents();
-                      if (!mounted) return;
-                      Navigator.pushNamed(
-                        context,
-                        '/calendar',
-                        arguments: events,
-                      );
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    tileColor: Colors.white10,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  ),
-                  const SizedBox(height: 10),
-                  ListTile(
-                    leading: const Icon(Icons.settings, color: Colors.green),
-                    title: const Text(
-                      'Settings',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    onTap: () {},
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    tileColor: Colors.white10,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListTile(
-                leading: const Icon(Icons.logout, color: Colors.redAccent),
-                title: const Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                onTap: _logOutPressed,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                tileColor: Colors.white10,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-              ),
-            ),
-          ],
         ),
       ),
     );
