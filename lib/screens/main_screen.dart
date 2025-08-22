@@ -86,7 +86,13 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _loading = true;
     });
-    _setDailyTask();
+
+    // ✅ Only save the task if it has NOT been completed yet
+    if (_todayTask != null && !_todayTask!.isCompleted) {
+      await saveUserTask(_todayTask!, -1, "", false);
+    }
+
+    await _setDailyTask();
   }
 
   @override
@@ -106,7 +112,6 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       drawer: DrawerWidget(),
-
       backgroundColor: isCompleted ? Colors.green : const Color(0xFF2B2726),
       body: Center(
         child: SafeArea(
@@ -126,16 +131,14 @@ class _MainScreenState extends State<MainScreen> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    if (!_todayTask!.isCompleted)
+
+                    if (!isCompleted)
                       ShadowBtn(
                         onPressed: () {
                           Navigator.pushNamed(
                             context,
                             '/success',
-                            arguments: {
-                              "task": _todayTask!.taskText,
-                              "category": _todayTask!.category,
-                            },
+                            arguments: _todayTask!,
                           );
                         },
                         btnText: "Mark completed",
@@ -156,7 +159,10 @@ class _MainScreenState extends State<MainScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      CountDown(onFinished: resetTask),
+                      Visibility(
+                        visible: isCompleted,
+                        child: CountDown(onFinished: resetTask),
+                      ),
                     ],
                   ],
                 )

@@ -27,6 +27,7 @@ class _CountDownState extends State<CountDown> {
     final midnight = DateTime(now.year, now.month, now.day + 1);
     final difference = midnight.difference(now);
 
+    print(difference);
     setState(() {
       _timeLeft = difference;
     });

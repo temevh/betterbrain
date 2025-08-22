@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/models/task.dart';
 import 'package:namer_app/widgets/category_pill.dart';
 import 'package:namer_app/widgets/feedback_row.dart';
 import 'package:namer_app/widgets/reflection.dart';
@@ -6,7 +7,7 @@ import 'package:namer_app/buttons/shadow_btn.dart';
 import 'package:namer_app/services/database_service.dart';
 
 class SuccessScreen extends StatefulWidget {
-  final Map<String, dynamic>? taskData;
+  final Task? taskData;
   const SuccessScreen({super.key, this.taskData});
 
   @override
@@ -36,6 +37,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
         widget.taskData!,
         selectedFeedback ?? 0,
         reflectionText,
+        true,
       );
 
       if (!mounted) return;
@@ -59,8 +61,8 @@ class _SuccessScreenState extends State<SuccessScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final task = widget.taskData?['task'] ?? 'Unknown task';
-    final category = widget.taskData?['category'] ?? 'Unknown category';
+    final task = widget.taskData?.taskText ?? 'Unknown task';
+    final category = widget.taskData?.category ?? 'Unknown category';
 
     return Scaffold(
       body: SafeArea(

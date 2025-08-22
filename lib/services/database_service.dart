@@ -66,9 +66,10 @@ Future<List<Task>> getUserEvents() async {
 
 //Save a task
 Future<bool> saveUserTask(
-  Map<String, dynamic> task,
+  Task task,
   int difficulty,
   String reflection,
+  bool wasCompleted,
 ) async {
   final date = DateTime.now();
   final normalizedDate = DateTime(date.year, date.month, date.day);
@@ -90,11 +91,11 @@ Future<bool> saveUserTask(
           "year": date.year,
           "month": date.month,
           "day": date.day,
-          "taskText": task['task'],
-          "category": task['category'],
+          "taskText": task.taskText,
+          "category": task.category,
           "difficulty": difficulty,
           "reflection": reflection,
-          "isCompleted": true,
+          "isCompleted": wasCompleted,
           "createdAt": FieldValue.serverTimestamp(),
         });
 
