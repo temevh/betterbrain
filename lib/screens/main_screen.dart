@@ -176,40 +176,6 @@ class _MainScreenState extends State<MainScreen> {
                   horizontal: 20,
                 ),
                 children: [
-                  Row(
-                    children: const [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.green,
-                        child: Icon(
-                          Icons.person,
-                          size: 30,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "John Doe",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "john@example.com",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 40),
                   ListTile(
                     leading: const Icon(

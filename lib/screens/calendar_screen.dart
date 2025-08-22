@@ -74,7 +74,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final bg = _bgForDay(day);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.all(6),
+      margin: const EdgeInsets.all(4),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: bg,
@@ -86,7 +86,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       child: Text(
         '${day.day}',
-        style: const TextStyle(fontSize: 20, color: Colors.white),
+        style: const TextStyle(fontSize: 18, color: Colors.white),
       ),
     );
   }
@@ -118,7 +118,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               formatButtonVisible: false,
               titleCentered: true,
               titleTextStyle: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -133,7 +133,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
-          // Event List for selected day
           Expanded(
             child: ListView(
               children: _getEventForDay(_selectedDay ?? _focusedDay) != null
