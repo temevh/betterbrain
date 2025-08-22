@@ -1,5 +1,4 @@
 Change task difficulty logic
-More info to calendar
 Settings?
 Responsiveness
 Failure on day Change
@@ -7,3 +6,5 @@ Streaks
 New images
 Google fix
 New task on day change
+
+More info to calendar

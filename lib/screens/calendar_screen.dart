@@ -31,6 +31,7 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  int streak = 0;
   final Map<DateTime, Event> _events = {};
 
   DateTime _normalizeDate(DateTime date) =>
@@ -41,6 +42,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.didChangeDependencies();
     final userTasks = ModalRoute.of(context)!.settings.arguments as List<Task>;
     _setEvents(userTasks);
+    _determineStreak();
   }
 
   void _setEvents(List<Task> userTasks) {
@@ -70,6 +72,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return event.isCompleted ? Colors.green : Colors.red;
   }
 
+  void _determineStreak() {
+    int currentStreak = 0;
+    DateTime today = _normalizeDate(DateTime.now());
+
+    DateTime checkDay = today;
+
+    while (true) {
+      final event = _getEventForDay(checkDay);
+
+      if (event != null && event.isCompleted) {
+        currentStreak++;
+        checkDay = checkDay.subtract(const Duration(days: 1));
+      } else {
+        break; //Streak ended
+      }
+    }
+
+    setState(() {
+      streak = currentStreak;
+    });
+  }
+
   Widget _buildDayCell(DateTime day, bool isSelected) {
     final bg = _bgForDay(day);
     return AnimatedContainer(
@@ -94,7 +118,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Calendar')),
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [Text('Calendar'), Text("$streak 🔥")],
+        ),
+      ),
       body: Column(
         children: [
           TableCalendar<Event>(
