@@ -1,10 +1,10 @@
 Change task difficulty logic
 Settings?
 Responsiveness
-Failure on day Change
-Streaks
 New images
 Google fix
-New task on day change
 
+New task and isCompleted false on day change
+
+Streaks
 More info to calendar

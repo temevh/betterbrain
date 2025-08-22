@@ -122,7 +122,7 @@ class _MainScreenState extends State<MainScreen> {
                         "category": _todayTask!.category,
                       },
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
                     if (!_todayTask!.isCompleted)
                       ShadowBtn(
                         onPressed: () {
