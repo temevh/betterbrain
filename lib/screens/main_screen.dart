@@ -81,6 +81,14 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  void resetTask() async {
+    print("resetting task");
+    setState(() {
+      _loading = true;
+    });
+    _setDailyTask();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isCompleted = _todayTask?.isCompleted ?? false;
@@ -148,7 +156,7 @@ class _MainScreenState extends State<MainScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      CountDown(), // Only shows if task is completed
+                      CountDown(onFinished: resetTask),
                     ],
                   ],
                 )
