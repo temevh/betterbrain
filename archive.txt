@@ -1,33 +1,13 @@
-import 'package:flutter/material.dart';
-
-class SaveBtn extends StatefulWidget {
-  final VoidCallback onPressed;
-
-  const SaveBtn({super.key, required this.onPressed});
-
-  @override
-  State<SaveBtn> createState() => _SaveBtnState();
-}
-
-class _SaveBtnState extends State<SaveBtn> {
-  bool _isPressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
+3D Button
+SizedBox(
       width: 350,
       child: GestureDetector(
-        onTapDown: (_) {
-          setState(() => _isPressed = true);
-        },
-        onTapUp: (_) async {
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) {
           setState(() => _isPressed = false);
           widget.onPressed();
-          Navigator.pop(context, true);
         },
-        onTapCancel: () {
-          setState(() => _isPressed = false);
-        },
+        onTapCancel: () => setState(() => _isPressed = false),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),
           padding: const EdgeInsets.all(8),
@@ -47,10 +27,10 @@ class _SaveBtnState extends State<SaveBtn> {
               ),
             ],
           ),
-          child: Center(
+          child: const Center(
             child: Text(
-              "Save",
-              style: const TextStyle(
+              "Mark completed",
+              style: TextStyle(
                 fontSize: 32,
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
@@ -60,5 +40,3 @@ class _SaveBtnState extends State<SaveBtn> {
         ),
       ),
     );
-  }
-}

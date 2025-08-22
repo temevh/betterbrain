@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/widgets/category_pill.dart';
 import 'package:namer_app/widgets/feedback_row.dart';
 import 'package:namer_app/widgets/reflection.dart';
-import 'package:namer_app/buttons/save_btn.dart';
+import 'package:namer_app/buttons/shadow_btn.dart';
 import 'package:namer_app/services/database_service.dart';
 
 class SuccessScreen extends StatefulWidget {
@@ -30,6 +30,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
   }
 
   void _onSavePressed() async {
+    print("Save pressed");
     if (widget.taskData != null) {
       bool success = await saveUserTask(
         widget.taskData!,
@@ -108,7 +109,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     ),
                     const SizedBox(height: 20),
                     // Category chip
-                    CategoryPill(category: category),
+                    CategoryPill(category: category, size: 20),
                     const SizedBox(height: 20),
 
                     const SizedBox(height: 20),
@@ -124,7 +125,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: SaveBtn(onPressed: _onSavePressed),
+              child: ShadowBtn(onPressed: _onSavePressed, btnText: "Save"),
             ),
           ],
         ),

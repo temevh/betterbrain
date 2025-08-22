@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/services/database_service.dart';
 import 'package:namer_app/widgets/build_input_field.dart';
+import 'package:namer_app/buttons/flat_btn.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -178,29 +179,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               const Spacer(),
 
               // Submit button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    passwordValidity.containsValue(false)
-                        ? null
-                        : _savePressed();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: passwordValidity.containsValue(false)
-                        ? Colors.grey
-                        : Colors.greenAccent,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    "Create Account",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
+              FlatButton(
+                isEnabled: !passwordValidity.containsValue(false),
+                onPressed: _savePressed,
+                btnText: "Create account",
               ),
             ],
           ),

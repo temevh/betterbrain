@@ -29,7 +29,7 @@ class _TaskBoxState extends State<TaskBox> {
         if (category.isNotEmpty)
           Image.asset('assets/images/$category.png', height: 280)
         else
-          const SizedBox(height: 340),
+          const SizedBox(height: 280),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           margin: const EdgeInsets.only(top: 30),
@@ -53,7 +53,7 @@ class _TaskBoxState extends State<TaskBox> {
               Opacity(
                 opacity: 0.2,
                 child: SizedBox(
-                  width: 340,
+                  width: 300,
                   child: Divider(
                     thickness: 3,
                     color: Colors.white,
@@ -64,19 +64,19 @@ class _TaskBoxState extends State<TaskBox> {
               ),
               const SizedBox(height: 10),
               SizedBox(
-                width: 350,
+                width: 310,
                 child: Text(
                   task,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 36,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              CategoryPill(category: category),
+              CategoryPill(category: category, size: 20),
             ],
           ),
         ),

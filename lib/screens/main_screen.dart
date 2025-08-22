@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/services/database_service.dart';
 import '../widgets/task_box.dart';
-import '../buttons/success_btn.dart';
+import '../buttons/shadow_btn.dart';
 import 'dart:math';
 import 'package:namer_app/widgets/countdown.dart';
 import 'package:namer_app/models/task.dart';
@@ -92,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2B2726),
+        backgroundColor: isCompleted ? Colors.green : const Color(0xFF2B2726),
         leading: Builder(
           builder: (context) {
             return IconButton(
@@ -124,7 +124,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     const SizedBox(height: 30),
                     if (!_todayTask!.isCompleted)
-                      SuccessBtn(
+                      ShadowBtn(
                         onPressed: () {
                           Navigator.pushNamed(
                             context,
@@ -135,20 +135,21 @@ class _MainScreenState extends State<MainScreen> {
                             },
                           );
                         },
+                        btnText: "Mark completed",
                       )
                     else ...[
                       const Text(
                         "Well done! 👍",
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 30),
                       const Text(
-                        "Come back in",
+                        "New task in",
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -175,40 +176,6 @@ class _MainScreenState extends State<MainScreen> {
                   horizontal: 20,
                 ),
                 children: [
-                  Row(
-                    children: const [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.green,
-                        child: Icon(
-                          Icons.person,
-                          size: 30,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "John Doe",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "john@example.com",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 40),
                   ListTile(
                     leading: const Icon(

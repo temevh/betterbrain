@@ -3,8 +3,9 @@ import 'package:namer_app/utils/category_utils.dart';
 
 class CategoryPill extends StatelessWidget {
   final String category;
+  final double size;
 
-  const CategoryPill({super.key, required this.category});
+  const CategoryPill({super.key, required this.category, required this.size});
 
   final double backgroundOpacity = 0.25;
   final double borderOpacity = 0.4;
@@ -26,7 +27,7 @@ class CategoryPill extends StatelessWidget {
         children: [
           Icon(
             getCategoryIcon(category),
-            size: 20,
+            size: size,
             color: getCategoryColor(category),
           ),
           const SizedBox(width: 6),
@@ -34,7 +35,7 @@ class CategoryPill extends StatelessWidget {
             category,
             style: TextStyle(
               color: getCategoryColor(category),
-              fontSize: 18,
+              fontSize: size,
               fontWeight: FontWeight.w600,
             ),
           ),
