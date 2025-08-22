@@ -132,7 +132,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    if (!isCompleted)
+                    if (!isCompleted) ...[
                       ShadowBtn(
                         onPressed: () {
                           Navigator.pushNamed(
@@ -142,8 +142,9 @@ class _MainScreenState extends State<MainScreen> {
                           );
                         },
                         btnText: "Mark completed",
-                      )
-                    else ...[
+                      ),
+                      CountDown(onFinished: resetTask),
+                    ] else ...[
                       const Text(
                         "Well done! 👍",
                         style: TextStyle(
