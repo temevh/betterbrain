@@ -10,7 +10,7 @@ class CountDown extends StatefulWidget {
 }
 
 class _CountDownState extends State<CountDown> {
-  late Timer _timer;
+  Timer? _timer;
   Duration _timeLeft = Duration.zero;
 
   @override
@@ -27,21 +27,19 @@ class _CountDownState extends State<CountDown> {
     final midnight = DateTime(now.year, now.month, now.day + 1);
     final difference = midnight.difference(now);
 
-    setState(() {
-      _timeLeft = difference;
-    });
+    if (!mounted) return;
+
+    setState(() => _timeLeft = difference);
 
     if (difference.inSeconds <= 0) {
-      _timer.cancel();
-      if (widget.onFinished != null) {
-        widget.onFinished!();
-      }
+      _timer?.cancel();
+      widget.onFinished?.call();
     }
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
