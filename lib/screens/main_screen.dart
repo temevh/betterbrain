@@ -87,9 +87,8 @@ class _MainScreenState extends State<MainScreen> {
       _loading = true;
     });
 
-    // ✅ Only save the task if it has NOT been completed yet
     if (_todayTask != null && !_todayTask!.isCompleted) {
-      await saveUserTask(_todayTask!, -1, "", false);
+      await saveUserTask(_todayTask!, 404, "Task not completed", false);
     }
 
     await _setDailyTask();
@@ -132,39 +131,54 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    if (!isCompleted) ...[
-                      ShadowBtn(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/success',
-                            arguments: _todayTask!,
-                          );
-                        },
-                        btnText: "Mark completed",
+                    // Shadow button, only visible if not completed
+                    Visibility(
+                      visible: !isCompleted,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: Column(
+                        children: [
+                          ShadowBtn(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/success',
+                                arguments: _todayTask!,
+                              );
+                            },
+                            btnText: "Mark completed",
+                          ),
+                        ],
                       ),
-                      CountDown(onFinished: resetTask),
-                    ] else ...[
-                      const Text(
-                        "Well done! 👍",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+
+                    // Congratulatory message, only visible if completed
+                    Visibility(
+                      visible: isCompleted,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: Column(
+                        children: const [
+                          Text(
+                            "Well done! 👍",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 30),
-                      const Text(
-                        "New task in",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+                    Text(
+                      "New task in",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Visibility(
-                        visible: isCompleted,
-                        child: CountDown(onFinished: resetTask),
-                      ),
-                    ],
+                    ),
+                    CountDown(onFinished: resetTask),
                   ],
                 )
               : const Text("No task available"),

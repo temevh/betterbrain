@@ -25,6 +25,8 @@ class EventCard extends StatelessWidget {
         return "🙂 Just right";
       case 1:
         return "😴 Too easy";
+      case 404:
+        return "❓ unknown";
       default:
         return "❓ unknown";
     }
