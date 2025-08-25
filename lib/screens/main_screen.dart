@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:namer_app/widgets/countdown.dart';
 import 'package:namer_app/models/task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:namer_app/widgets/drawer_widget.dart';
 //import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
@@ -80,10 +81,17 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void _logOutPressed() async {
-    await FirebaseAuth.instance.signOut();
-    if (!mounted) return;
-    Navigator.pushReplacementNamed(context, '/start');
+  void resetTask() async {
+    print("resetting task");
+    setState(() {
+      _loading = true;
+    });
+
+    if (_todayTask != null && !_todayTask!.isCompleted) {
+      await saveUserTask(_todayTask!, 404, "Task not completed", false);
+    }
+
+    await _setDailyTask();
   }
 
   @override
@@ -102,8 +110,7 @@ class _MainScreenState extends State<MainScreen> {
           },
         ),
       ),
-      drawer: _buildDrawer(),
-
+      drawer: DrawerWidget(),
       backgroundColor: isCompleted ? Colors.green : const Color(0xFF2B2726),
       body: Center(
         child: SafeArea(
@@ -123,118 +130,58 @@ class _MainScreenState extends State<MainScreen> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    if (!_todayTask!.isCompleted)
-                      ShadowBtn(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/success',
-                            arguments: {
-                              "task": _todayTask!.taskText,
-                              "category": _todayTask!.category,
+
+                    // Shadow button, only visible if not completed
+                    Visibility(
+                      visible: !isCompleted,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: Column(
+                        children: [
+                          ShadowBtn(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/success',
+                                arguments: _todayTask!,
+                              );
                             },
-                          );
-                        },
-                        btnText: "Mark completed",
-                      )
-                    else ...[
-                      const Text(
-                        "Well done! 👍",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            btnText: "Mark completed",
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 30),
-                      const Text(
-                        "New task in",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+
+                    // Congratulatory message, only visible if completed
+                    Visibility(
+                      visible: isCompleted,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: Column(
+                        children: const [
+                          Text(
+                            "Well done! 👍",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                      CountDown(), // Only shows if task is completed
-                    ],
+                    ),
+                    Text(
+                      "New task in",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    CountDown(onFinished: resetTask),
                   ],
                 )
               : const Text("No task available"),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawer() {
-    return Drawer(
-      child: Container(
-        color: const Color(0xFF2B2726),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 50,
-                  horizontal: 20,
-                ),
-                children: [
-                  const SizedBox(height: 40),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.calendar_today,
-                      color: Colors.green,
-                    ),
-                    title: const Text(
-                      'Calendar',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    onTap: () async {
-                      final events = await getUserEvents();
-                      if (!mounted) return;
-                      Navigator.pushNamed(
-                        context,
-                        '/calendar',
-                        arguments: events,
-                      );
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    tileColor: Colors.white10,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  ),
-                  const SizedBox(height: 10),
-                  ListTile(
-                    leading: const Icon(Icons.settings, color: Colors.green),
-                    title: const Text(
-                      'Settings',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    onTap: () {},
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    tileColor: Colors.white10,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListTile(
-                leading: const Icon(Icons.logout, color: Colors.redAccent),
-                title: const Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                onTap: _logOutPressed,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                tileColor: Colors.white10,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-              ),
-            ),
-          ],
         ),
       ),
     );

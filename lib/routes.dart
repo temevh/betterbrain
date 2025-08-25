@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/models/task.dart';
 import 'screens/success_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/calendar_screen.dart';
@@ -16,8 +17,7 @@ final Map<String, WidgetBuilder> appRoutes = {
     return MainScreen(isCompleted: isCompleted);
   },
   '/success': (context) {
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args = ModalRoute.of(context)?.settings.arguments as Task;
     return SuccessScreen(taskData: args);
   },
   '/calendar': (context) => const CalendarScreen(),

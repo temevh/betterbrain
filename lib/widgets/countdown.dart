@@ -2,14 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class CountDown extends StatefulWidget {
-  const CountDown({super.key});
+  final VoidCallback? onFinished;
 
+  const CountDown({super.key, this.onFinished});
   @override
   State<CountDown> createState() => _CountDownState();
 }
 
 class _CountDownState extends State<CountDown> {
-  late Timer _timer;
+  Timer? _timer;
   Duration _timeLeft = Duration.zero;
 
   @override
@@ -24,14 +25,21 @@ class _CountDownState extends State<CountDown> {
   void _calculateTimeLeft() {
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day + 1);
-    setState(() {
-      _timeLeft = midnight.difference(now);
-    });
+    final difference = midnight.difference(now);
+
+    if (!mounted) return;
+
+    setState(() => _timeLeft = difference);
+
+    if (difference.inSeconds <= 0) {
+      _timer?.cancel();
+      widget.onFinished?.call();
+    }
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
