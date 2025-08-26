@@ -32,7 +32,7 @@ class CategoryPill extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            category,
+            category.toUpperCase(),
             style: TextStyle(
               color: getCategoryColor(category),
               fontSize: size,
