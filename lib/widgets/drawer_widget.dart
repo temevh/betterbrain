@@ -25,7 +25,7 @@ class DrawerWidget extends StatelessWidget {
                   horizontal: 20,
                 ),
                 children: [
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
                   ListTile(
                     leading: const Icon(
                       Icons.calendar_today,
@@ -49,7 +49,7 @@ class DrawerWidget extends StatelessWidget {
                     tileColor: Colors.white10,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 4),
                   ListTile(
                     leading: const Icon(Icons.settings, color: Colors.green),
                     title: const Text(
@@ -63,7 +63,7 @@ class DrawerWidget extends StatelessWidget {
                     tileColor: Colors.white10,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 4),
                   ListTile(
                     leading: const Icon(Icons.leaderboard, color: Colors.green),
                     title: const Text(
@@ -73,6 +73,22 @@ class DrawerWidget extends StatelessWidget {
                     onTap: () async {
                       final stats = await getUserStats(user);
                       Navigator.pushNamed(context, '/stats', arguments: stats);
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    tileColor: Colors.white10,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                  ),
+                  const SizedBox(height: 4),
+                  ListTile(
+                    leading: const Icon(Icons.info, color: Colors.green),
+                    title: const Text(
+                      'Info',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/info');
                     },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

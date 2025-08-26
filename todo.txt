@@ -1,10 +1,10 @@
 Settings?
-Info tab
 Responsiveness
 Google fix
 
-User stats visible
+Info tab
 
+User stats visible
 New images
 Change task difficulty logic
 New task and isCompleted false on day change
