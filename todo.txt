@@ -1,10 +1,10 @@
-Change task difficulty logic
 Settings?
 Responsiveness
 New images
 Google fix
 
-New task and isCompleted false on day change
+Change task difficulty logic
 
+New task and isCompleted false on day change
 Streaks
 More info to calendar
