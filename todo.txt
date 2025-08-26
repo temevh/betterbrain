@@ -1,9 +1,9 @@
 Settings?
-User stats visible
 Info tab
 Responsiveness
 Google fix
 
+User stats visible
 
 New images
 Change task difficulty logic
