@@ -61,7 +61,7 @@ class _MainScreenState extends State<MainScreen> {
     final randomTask = await getRandomTask(randomStat);
     String compiledTask = randomTask["task"].replaceAll(
       '§',
-      (statValue ?? 0).toInt().toString(),
+      (statValue! * randomTask['multiplier']).ceil().toInt().toString(),
     );
 
     setState(() {

@@ -60,7 +60,7 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
       child: Row(
         children: [
           Container(
-            width: _chipWidth, // fixed width for all chips
+            width: _chipWidth,
             height: 40,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -118,7 +118,7 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 28),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
               child: Column(
                 children: [
                   const Text(
@@ -144,7 +144,7 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
               if (category.value == true) _confidenceSelection(category.key),
             Spacer(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

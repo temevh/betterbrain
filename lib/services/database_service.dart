@@ -99,6 +99,23 @@ Future<bool> saveUserTask(
           "createdAt": FieldValue.serverTimestamp(),
         });
 
+    if (wasCompleted == true) {
+      // Check and update stat only if < 10
+      final userDoc = await db.collection("users").doc(currentUser.uid).get();
+
+      if (userDoc.exists) {
+        final stats = userDoc.data()?["stats"] ?? {};
+        final currentValue = (stats[task.category] ?? 0).toDouble();
+
+        if (currentValue < 10) {
+          final newValue = (currentValue + 0.1).clamp(0, 10);
+          await db.collection("users").doc(currentUser.uid).update({
+            "stats.${task.category}": newValue,
+          });
+        }
+      }
+    }
+
     return true;
   } catch (e) {
     print("Error saving task: $e");
