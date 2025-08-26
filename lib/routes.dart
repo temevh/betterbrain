@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/models/task.dart';
+import 'package:namer_app/screens/stats_screen.dart';
 import 'screens/success_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/calendar_screen.dart';
@@ -26,4 +27,9 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/categorySelection': (context) => const CategorySelectionsScreen(),
   '/confidence': (context) => const ConfidenceScreen(),
   '/loginscreen': (context) => const LoginScreen(),
+  '/stats': (context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, double>;
+    return StatsScreen(userStats: args);
+  },
 };
