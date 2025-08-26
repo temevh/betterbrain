@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 
 IconData getCategoryIcon(String category) {
   switch (category.toLowerCase()) {
-    case 'social':
-      return Icons.people;
-    case 'health':
-      return Icons.favorite;
+    case 'fitness':
+      return Icons.fitness_center;
+    case 'learning':
+      return Icons.psychology;
     case 'productivity':
       return Icons.work;
     case 'selfcare':
-      return Icons.bathtub;
-    case 'learning':
-      return Icons.psychology;
+      return Icons.spa;
+    case 'social':
+      return Icons.people;
+    case 'focus':
+      return Icons.center_focus_strong;
+    case 'creativity':
+      return Icons.brush;
     default:
       return Icons.help_outline;
   }
@@ -19,16 +23,20 @@ IconData getCategoryIcon(String category) {
 
 Color getCategoryColor(String category) {
   switch (category.toLowerCase()) {
-    case 'social':
+    case 'fitness':
+      return Colors.redAccent;
+    case 'learning':
       return Colors.blueAccent;
-    case 'health':
-      return Colors.green;
     case 'productivity':
       return Colors.orangeAccent;
     case 'selfcare':
-      return Colors.red;
-    case 'learning':
-      return Colors.cyanAccent;
+      return Colors.purpleAccent;
+    case 'social':
+      return Colors.teal;
+    case 'focus':
+      return Colors.indigo;
+    case 'creativity':
+      return Colors.pinkAccent;
     default:
       return Colors.grey;
   }

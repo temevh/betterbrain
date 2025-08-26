@@ -10,13 +10,14 @@ class CategorySelectionsScreen extends StatefulWidget {
 }
 
 class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
-  //Get categories from firebase s
   final categories = {
-    "health": false,
+    "fitness": false,
     "learning": false,
     "productivity": false,
     "selfcare": false,
     "social": false,
+    "focus": false,
+    "creativity": false,
   };
 
   Widget _categorySelection(String category, bool value) {
@@ -82,7 +83,7 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
       backgroundColor: const Color(0xFF2B2726),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
