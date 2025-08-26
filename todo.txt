@@ -1,10 +1,11 @@
 Settings?
 User stats visible
+Info tab
 Responsiveness
 Google fix
 
-New images
 
+New images
 Change task difficulty logic
 New task and isCompleted false on day change
 Streaks
