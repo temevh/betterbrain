@@ -12,7 +12,6 @@ import 'package:namer_app/widgets/drawer_widget.dart';
 
 class MainScreen extends StatefulWidget {
   final bool isCompleted;
-
   const MainScreen({super.key, this.isCompleted = false});
 
   @override
@@ -22,7 +21,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   Task? _todayTask;
   bool _loading = true;
-
   @override
   void initState() {
     super.initState();
@@ -110,7 +108,9 @@ class _MainScreenState extends State<MainScreen> {
           },
         ),
       ),
-      drawer: DrawerWidget(),
+      drawer: FirebaseAuth.instance.currentUser != null
+          ? DrawerWidget(user: FirebaseAuth.instance.currentUser!)
+          : const SizedBox.shrink(),
       backgroundColor: isCompleted ? Colors.green : const Color(0xFF2B2726),
       body: Center(
         child: SafeArea(

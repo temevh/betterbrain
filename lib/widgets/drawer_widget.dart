@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/services/database_service.dart';
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({super.key});
+  final User user;
+  const DrawerWidget({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,23 @@ class DrawerWidget extends StatelessWidget {
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     onTap: () {},
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    tileColor: Colors.white10,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                  ),
+                  const SizedBox(height: 10),
+                  ListTile(
+                    leading: const Icon(Icons.leaderboard, color: Colors.green),
+                    title: const Text(
+                      'Stats',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    onTap: () async {
+                      final stats = await getUserStats(user);
+                      Navigator.pushNamed(context, '/stats', arguments: stats);
+                    },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

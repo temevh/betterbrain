@@ -27,9 +27,9 @@ class _TaskBoxState extends State<TaskBox> {
     return Column(
       children: [
         if (category.isNotEmpty)
-          Image.asset('assets/images/$category.png', height: 300)
+          Image.asset('assets/images/$category.png', height: 280)
         else
-          const SizedBox(height: 300),
+          const SizedBox(height: 280),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           margin: const EdgeInsets.only(top: 30),
