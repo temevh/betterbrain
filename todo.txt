@@ -1,9 +1,9 @@
 Settings?
 User stats visible
-New images
+Responsiveness
 Google fix
 
-Responsiveness
+New images
 
 Change task difficulty logic
 New task and isCompleted false on day change
