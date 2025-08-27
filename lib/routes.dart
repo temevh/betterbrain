@@ -9,6 +9,7 @@ import 'screens/create_account_screen.dart';
 import 'package:namer_app/screens/category_selections_screen.dart';
 import 'package:namer_app/screens/confidence_screen.dart';
 import 'package:namer_app/screens/login_screen.dart';
+import 'package:namer_app/screens/info_screen.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
   '/': (context) {
@@ -32,4 +33,5 @@ final Map<String, WidgetBuilder> appRoutes = {
         ModalRoute.of(context)!.settings.arguments as Map<String, double>;
     return StatsScreen(userStats: args);
   },
+  '/info': (context) => const InfoScreen(),
 };
