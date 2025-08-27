@@ -103,86 +103,104 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color(0xFF2B2726),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Create Account✨",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              // Scrollable form
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Create Account✨",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.01),
+                      Opacity(
+                        opacity: 0.6,
+                        child: const Text(
+                          "Account will be used to save tasks and settings across devices",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.04),
+
+                      // Email
+                      const Text(
+                        "Email",
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      SizedBox(height: screenHeight * 0.01),
+                      buildInputField(
+                        "Enter email",
+                        Icons.email,
+                        (value) => setState(() => email = value),
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+
+                      // Password
+                      const Text(
+                        "Password",
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      SizedBox(height: screenHeight * 0.01),
+                      buildInputField(
+                        "Enter password",
+                        Icons.lock,
+                        (value) => updateMainPassword(value),
+                        obscure: true,
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+
+                      // Verify Password
+                      const Text(
+                        "Verify password",
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      SizedBox(height: screenHeight * 0.01),
+                      buildInputField(
+                        "Re-enter password",
+                        Icons.lock_outline,
+                        (value) => updatePassword(value),
+                        obscure: true,
+                      ),
+                      SizedBox(height: screenHeight * 0.01),
+                      Opacity(
+                        opacity: 0.6,
+                        child: const Text(
+                          "Password should:",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                      ...passwordValidity.entries.map(
+                        (element) =>
+                            _passwordValidity(element.key, element.value),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.03),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: 10),
-              Opacity(
-                opacity: 0.6,
-                child: const Text(
-                  "Account will be used to save tasks and settings across devices",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+
+              // Fixed button at the bottom
+              SafeArea(
+                child: FlatButton(
+                  isEnabled: !passwordValidity.containsValue(false),
+                  onPressed: _savePressed,
+                  btnText: "Create account",
                 ),
-              ),
-              const SizedBox(height: 40),
-
-              // Email
-              const Text("Email", style: TextStyle(color: Colors.white70)),
-              const SizedBox(height: 8),
-              buildInputField(
-                "Enter email",
-                Icons.email,
-                (value) => setState(() => email = value),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Password
-              const Text("Password", style: TextStyle(color: Colors.white70)),
-              const SizedBox(height: 8),
-              buildInputField(
-                "Enter password",
-                Icons.lock,
-                (value) => updateMainPassword(value),
-                obscure: true,
-              ),
-
-              const SizedBox(height: 24),
-
-              // Verify Password
-              const Text(
-                "Verify password",
-                style: TextStyle(color: Colors.white70),
-              ),
-              const SizedBox(height: 8),
-              buildInputField(
-                "Re-enter password",
-                Icons.lock_outline,
-                (value) => updatePassword(value),
-                obscure: true,
-              ),
-              SizedBox(height: 10),
-              Opacity(
-                opacity: 0.6,
-                child: const Text(
-                  "Password should:",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ),
-              ...passwordValidity.entries.map(
-                (element) => _passwordValidity(element.key, element.value),
-              ),
-
-              const Spacer(),
-
-              // Submit button
-              FlatButton(
-                isEnabled: !passwordValidity.containsValue(false),
-                onPressed: _savePressed,
-                btnText: "Create account",
               ),
             ],
           ),
