@@ -10,3 +10,8 @@ Change task difficulty logic
 New task and isCompleted false on day change
 Streaks
 More info to calendar
+
+Backlog
+DB schema changes
+ability to add a custom category
+Apple log in?

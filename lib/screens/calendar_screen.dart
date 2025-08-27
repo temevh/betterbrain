@@ -94,29 +94,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
     });
   }
 
-  Widget _buildDayCell(DateTime day, bool isSelected) {
+  Widget _buildDayCell(DateTime day, bool isSelected, double screenWidth) {
     final bg = _bgForDay(day);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.all(4),
+      margin: const EdgeInsets.all(6),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: bg,
         shape: BoxShape.circle,
         border: isSelected ? Border.all(width: 2, color: Colors.white) : null,
         boxShadow: bg != Colors.transparent
-            ? [BoxShadow(color: bg, blurRadius: 6, spreadRadius: 1)]
+            ? [BoxShadow(color: bg, blurRadius: 4, spreadRadius: 1)]
             : [],
       ),
       child: Text(
         '${day.day}',
-        style: const TextStyle(fontSize: 18, color: Colors.white),
+        style: TextStyle(fontSize: screenWidth * 0.05, color: Colors.white),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final selectedEvent = _getEventForDay(_selectedDay ?? _focusedDay);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -124,57 +128,59 @@ class _CalendarScreenState extends State<CalendarScreen> {
           children: [Text('Calendar'), Text("$streak 🔥")],
         ),
       ),
-      body: Column(
-        children: [
-          TableCalendar<Event>(
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2030, 12, 31),
-            focusedDay: _focusedDay,
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            },
-            eventLoader: (day) {
-              final event = _getEventForDay(day);
-              return event != null ? [event] : [];
-            },
-            calendarFormat: CalendarFormat.month,
-            calendarStyle: const CalendarStyle(isTodayHighlighted: false),
-            headerStyle: const HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            children: [
+              // Calendar
+              TableCalendar<Event>(
+                firstDay: DateTime.utc(2020, 1, 1),
+                lastDay: DateTime.utc(2030, 12, 31),
+                focusedDay: _focusedDay,
+                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                  });
+                },
+                eventLoader: (day) {
+                  final event = _getEventForDay(day);
+                  return event != null ? [event] : [];
+                },
+                calendarFormat: CalendarFormat.month,
+                calendarStyle: const CalendarStyle(isTodayHighlighted: false),
+                headerStyle: HeaderStyle(
+                  formatButtonVisible: false,
+                  titleCentered: true,
+                  titleTextStyle: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                calendarBuilders: CalendarBuilders(
+                  markerBuilder: (context, day, events) => const SizedBox(),
+                  defaultBuilder: (context, day, focusedDay) =>
+                      _buildDayCell(day, false, screenWidth),
+                  todayBuilder: (context, day, focusedDay) =>
+                      _buildDayCell(day, false, screenWidth),
+                  selectedBuilder: (context, day, focusedDay) =>
+                      _buildDayCell(day, true, screenWidth),
+                ),
               ),
-            ),
-            calendarBuilders: CalendarBuilders(
-              markerBuilder: (context, day, events) => const SizedBox(),
-              defaultBuilder: (context, day, focusedDay) =>
-                  _buildDayCell(day, false),
-              todayBuilder: (context, day, focusedDay) =>
-                  _buildDayCell(day, false),
-              selectedBuilder: (context, day, focusedDay) =>
-                  _buildDayCell(day, true),
-            ),
-          ),
 
-          Expanded(
-            child: ListView(
-              children: _getEventForDay(_selectedDay ?? _focusedDay) != null
-                  ? [
-                      EventCard(
-                        event: _getEventForDay(_selectedDay ?? _focusedDay)!,
-                        selectedDate: _selectedDay ?? _focusedDay,
-                      ),
-                    ]
-                  : [],
-            ),
+              const SizedBox(height: 16),
+
+              // Event Card (only if exists)
+              if (selectedEvent != null)
+                EventCard(
+                  event: selectedEvent,
+                  selectedDate: _selectedDay ?? _focusedDay,
+                ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
