@@ -8,8 +8,11 @@ class ShadowBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return SizedBox(
-      width: 350,
+      width: screenWidth * 0.9,
+      height: screenWidth * 0.15,
       child: InkWell(
         onTap: onPressed,
         borderRadius: BorderRadius.circular(20),
@@ -32,8 +35,8 @@ class ShadowBtn extends StatelessWidget {
           child: Center(
             child: Text(
               btnText,
-              style: const TextStyle(
-                fontSize: 32,
+              style: TextStyle(
+                fontSize: screenWidth * 0.07,
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
               ),

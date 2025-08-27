@@ -95,6 +95,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final isCompleted = _todayTask?.isCompleted ?? false;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -129,7 +130,7 @@ class _MainScreenState extends State<MainScreen> {
                         "category": _todayTask!.category,
                       },
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: screenWidth * 0.15),
 
                     // Shadow button, only visible if not completed
                     Visibility(
@@ -160,11 +161,11 @@ class _MainScreenState extends State<MainScreen> {
                       maintainAnimation: true,
                       maintainState: true,
                       child: Column(
-                        children: const [
+                        children: [
                           Text(
                             "Well done! 👍",
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: screenWidth * 0.05,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -174,7 +175,7 @@ class _MainScreenState extends State<MainScreen> {
                     Text(
                       "New task in",
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: screenWidth * 0.05,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

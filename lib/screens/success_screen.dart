@@ -57,6 +57,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     if (widget.taskData == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -73,10 +74,10 @@ class _SuccessScreenState extends State<SuccessScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const Text(
+                    Text(
                       "🎉 Good job!",
                       style: TextStyle(
-                        fontSize: 44,
+                        fontSize: screenWidth * 0.08,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -95,38 +96,36 @@ class _SuccessScreenState extends State<SuccessScreen> {
                           ),
                         ],
                       ),
-                      width: 350,
+                      width: screenWidth * 0.9,
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Text(
                           task,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 32,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.06,
                             color: Colors.green,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: screenWidth * 0.075),
                     // Category chip
-                    CategoryPill(category: category, size: 20),
-                    const SizedBox(height: 20),
-
-                    const SizedBox(height: 20),
+                    CategoryPill(category: category, size: screenWidth * 0.05),
+                    SizedBox(height: screenWidth * 0.05),
                     FeedbackRow(
                       selectedFeedback: selectedFeedback,
                       onFeedbackSelected: _onFeedbackSelected,
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: screenWidth * 0.05),
                     Reflection(onChanged: _onReflectionTextChanged),
                   ],
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: ShadowBtn(onPressed: _onSavePressed, btnText: "Save"),
             ),
           ],

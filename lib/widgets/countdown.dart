@@ -45,6 +45,7 @@ class _CountDownState extends State<CountDown> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     final hours = _timeLeft.inHours;
     final minutes = _timeLeft.inMinutes.remainder(60);
     final seconds = _timeLeft.inSeconds.remainder(60);
@@ -53,7 +54,10 @@ class _CountDownState extends State<CountDown> {
       "${hours.toString().padLeft(2, '0')}:"
       "${minutes.toString().padLeft(2, '0')}:"
       "${seconds.toString().padLeft(2, '0')}",
-      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      style: TextStyle(
+        fontSize: screenWidth * 0.05,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 }
