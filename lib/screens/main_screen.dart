@@ -95,6 +95,24 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final isCompleted = _todayTask?.isCompleted ?? false;
+    final screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen(double width) => width < 400;
+    bool isMediumScreen(double width) => width >= 400 && width < 800;
+    bool isLargeScreen(double width) => width >= 800;
+
+    double congratsFontSize;
+    double countdownFontSize;
+
+    if (isSmallScreen(screenWidth)) {
+      congratsFontSize = 18;
+      countdownFontSize = 18;
+    } else if (isMediumScreen(screenWidth)) {
+      congratsFontSize = 28;
+      countdownFontSize = 28;
+    } else {
+      congratsFontSize = 36;
+      countdownFontSize = 36;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -129,7 +147,6 @@ class _MainScreenState extends State<MainScreen> {
                         "category": _todayTask!.category,
                       },
                     ),
-                    const SizedBox(height: 20),
 
                     // Shadow button, only visible if not completed
                     Visibility(
@@ -160,11 +177,11 @@ class _MainScreenState extends State<MainScreen> {
                       maintainAnimation: true,
                       maintainState: true,
                       child: Column(
-                        children: const [
+                        children: [
                           Text(
                             "Well done! 👍",
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: congratsFontSize,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -174,11 +191,14 @@ class _MainScreenState extends State<MainScreen> {
                     Text(
                       "New task in",
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: screenWidth * 0.05,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    CountDown(onFinished: resetTask),
+                    CountDown(
+                      fontSize: countdownFontSize,
+                      onFinished: resetTask,
+                    ),
                   ],
                 )
               : const Text("No task available"),

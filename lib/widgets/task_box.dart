@@ -21,15 +21,20 @@ class _TaskBoxState extends State<TaskBox> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     final category = widget.taskData?['category'] ?? '';
     final task = widget.taskData?['task'] ?? 'No task found :/';
 
     return Column(
       children: [
         if (category.isNotEmpty)
-          Image.asset('assets/images/$category.png', height: 280)
+          Image.asset(
+            'assets/images/$category.png',
+            height: screenHeight * 0.25,
+          )
         else
-          const SizedBox(height: 280),
+          SizedBox(height: screenHeight * 0.25),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           margin: const EdgeInsets.only(top: 30),
@@ -47,7 +52,10 @@ class _TaskBoxState extends State<TaskBox> {
                 opacity: 0.5,
                 child: Text(
                   DateFormat("dd.MM.yyyy").format(DateTime.now()),
-                  style: const TextStyle(color: Colors.white, fontSize: 22),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: screenHeight * 0.02,
+                  ),
                 ),
               ),
               Opacity(
@@ -64,19 +72,19 @@ class _TaskBoxState extends State<TaskBox> {
               ),
               const SizedBox(height: 10),
               SizedBox(
-                width: 310,
+                width: screenWidth * 0.8,
                 child: Text(
                   task,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: screenHeight * 0.04,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              CategoryPill(category: category, size: 20),
+              CategoryPill(category: category, size: screenHeight * 0.02),
             ],
           ),
         ),

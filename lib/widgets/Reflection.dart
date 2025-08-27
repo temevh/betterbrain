@@ -12,19 +12,20 @@ class Reflection extends StatefulWidget {
 class _ReflectionState extends State<Reflection> {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
         Opacity(
           opacity: 0.8,
-          child: const Text(
+          child: Text(
             "Optional reflection",
-            style: TextStyle(fontSize: 22),
+            style: TextStyle(fontSize: screenWidth * 0.04),
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: screenWidth * 0.02),
         Center(
           child: Container(
-            width: 350,
+            width: screenWidth * 0.9,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),

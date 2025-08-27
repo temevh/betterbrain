@@ -12,17 +12,21 @@ class FeedbackRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
         Opacity(
           opacity: 0.8,
-          child: const Text(
+          child: Text(
             "How did the task feel?",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: screenWidth * 0.05,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: screenWidth * 0.02),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -73,6 +77,7 @@ class _FeedbackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
         GestureDetector(
@@ -91,7 +96,7 @@ class _FeedbackButton extends StatelessWidget {
                   : null,
             ),
             padding: const EdgeInsets.all(10),
-            child: Text(emoji, style: const TextStyle(fontSize: 36)),
+            child: Text(emoji, style: TextStyle(fontSize: screenWidth * 0.06)),
           ),
         ),
 

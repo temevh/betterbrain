@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 class CountDown extends StatefulWidget {
   final VoidCallback? onFinished;
+  final double? fontSize; // add this
 
-  const CountDown({super.key, this.onFinished});
+  const CountDown({super.key, this.onFinished, this.fontSize});
+
   @override
   State<CountDown> createState() => _CountDownState();
 }
@@ -53,7 +55,10 @@ class _CountDownState extends State<CountDown> {
       "${hours.toString().padLeft(2, '0')}:"
       "${minutes.toString().padLeft(2, '0')}:"
       "${seconds.toString().padLeft(2, '0')}",
-      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      style: TextStyle(
+        fontSize: widget.fontSize ?? 18,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 }

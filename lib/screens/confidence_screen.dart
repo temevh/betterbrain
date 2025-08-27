@@ -55,14 +55,17 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
 
   Widget _confidenceSelection(String category) {
     final value = confidence[category] ?? 1;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: screenWidth * 0.01,
+      ),
       child: Row(
         children: [
           Container(
             width: _chipWidth,
-            height: 40,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            height: screenWidth * 0.1,
             decoration: BoxDecoration(
               color: getCategoryColor(category).withAlpha((0.25 * 255).toInt()),
               borderRadius: BorderRadius.circular(50),
@@ -87,7 +90,7 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 2),
           Expanded(
             child: Align(
               alignment: Alignment.centerRight,
@@ -109,6 +112,7 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     final categories =
         ModalRoute.of(context)!.settings.arguments as Map<String, bool>;
     return Scaffold(
@@ -121,10 +125,10 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     "How confident from 1 to 10 do you feel in each category? 🤔",
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: screenWidth * 0.05,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -132,17 +136,28 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
                   SizedBox(height: 10),
                   Opacity(
                     opacity: 0.6,
-                    child: const Text(
+                    child: Text(
                       "Selections affect the difficulty of the tasks",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.04,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            for (var category in categories.entries)
-              if (category.value == true) _confidenceSelection(category.key),
-            Spacer(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    for (var category in categories.entries)
+                      if (category.value == true)
+                        _confidenceSelection(category.key),
+                  ],
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
               child: SizedBox(

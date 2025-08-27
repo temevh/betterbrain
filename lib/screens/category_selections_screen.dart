@@ -21,6 +21,14 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
   };
 
   Widget _categorySelection(String category, bool value) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final pillHeight = screenWidth * 0.14;
+    final horizontalPadding = screenWidth * 0.03;
+    final verticalPadding = screenWidth * 0.01;
+    final fontSize = screenWidth * 0.045;
+    final iconSize = screenWidth * 0.05;
+
     return Column(
       children: [
         GestureDetector(
@@ -32,10 +40,12 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
           child: Opacity(
             opacity: value == true ? 1 : 0.3,
             child: Container(
-              height: 60,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              height: pillHeight,
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: verticalPadding,
+              ),
               decoration: BoxDecoration(
-                // ignore: deprecated_member_use
                 color: getCategoryColor(category).withOpacity(0.3),
                 borderRadius: BorderRadius.circular(50),
                 border: Border.all(
@@ -51,15 +61,15 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
                     children: [
                       Icon(
                         getCategoryIcon(category),
-                        size: 20,
+                        size: iconSize,
                         color: getCategoryColor(category),
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: screenWidth * 0.015),
                       Text(
                         category.toUpperCase(),
                         style: TextStyle(
                           color: getCategoryColor(category),
-                          fontSize: 18,
+                          fontSize: fontSize,
                           fontWeight: value == true
                               ? FontWeight.bold
                               : FontWeight.normal,
@@ -72,13 +82,16 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: screenWidth * 0.03), // spacing between pills
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color(0xFF2B2726),
       body: SafeArea(
@@ -87,18 +100,26 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Next, select the areas that you would like to improve in 📈",
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: screenWidth * 0.05,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 40),
-              for (var c in categories.entries)
-                _categorySelection(c.key, c.value),
-              Spacer(),
+              SizedBox(height: screenHeight * 0.02),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      for (var c in categories.entries)
+                        _categorySelection(c.key, c.value),
+                    ],
+                  ),
+                ),
+              ),
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
