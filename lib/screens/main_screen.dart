@@ -8,7 +8,6 @@ import 'package:namer_app/widgets/countdown.dart';
 import 'package:namer_app/models/task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:namer_app/widgets/drawer_widget.dart';
-//import '../buttons/failure_btn.dart';
 
 class MainScreen extends StatefulWidget {
   final bool isCompleted;
@@ -98,7 +97,6 @@ class _MainScreenState extends State<MainScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     bool isSmallScreen(double width) => width < 400;
     bool isMediumScreen(double width) => width >= 400 && width < 800;
-    bool isLargeScreen(double width) => width >= 800;
 
     double congratsFontSize;
     double countdownFontSize;
@@ -147,7 +145,7 @@ class _MainScreenState extends State<MainScreen> {
                         "category": _todayTask!.category,
                       },
                     ),
-
+                    SizedBox(height: screenWidth * 0.1),
                     // Shadow button, only visible if not completed
                     Visibility(
                       visible: !isCompleted,

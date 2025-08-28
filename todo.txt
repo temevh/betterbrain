@@ -1,8 +1,9 @@
 Settings?
 Google fix
 
-Responsiveness
+Guest user functionality
 
+Responsiveness
 Info tab
 User stats visible
 New images
