@@ -146,7 +146,6 @@ class _MainScreenState extends State<MainScreen> {
                       },
                     ),
                     SizedBox(height: screenWidth * 0.1),
-                    // Shadow button, only visible if not completed
                     Visibility(
                       visible: !isCompleted,
                       maintainSize: true,

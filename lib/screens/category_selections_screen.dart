@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/utils/category_utils.dart';
 
 class CategorySelectionsScreen extends StatefulWidget {
-  const CategorySelectionsScreen({super.key});
+  final bool isGuest;
+  const CategorySelectionsScreen({super.key, this.isGuest = false});
 
   @override
   State<CategorySelectionsScreen> createState() =>

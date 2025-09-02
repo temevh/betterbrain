@@ -25,7 +25,10 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/calendar': (context) => const CalendarScreen(),
   '/start': (context) => const StartScreen(),
   '/createAccount': (context) => const CreateAccountScreen(),
-  '/categorySelection': (context) => const CategorySelectionsScreen(),
+  '/categorySelection': (context) {
+    final args = ModalRoute.of(context)!.settings.arguments as bool;
+    return CategorySelectionsScreen(isGuest: args);
+  },
   '/confidence': (context) => const ConfidenceScreen(),
   '/loginscreen': (context) => const LoginScreen(),
   '/stats': (context) {
