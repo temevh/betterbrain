@@ -8,6 +8,7 @@ import 'routes.dart';
 void main() async {
   String initialRoute = '/start';
   WidgetsFlutterBinding.ensureInitialized();
+  //Check if local has guest info
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final User? currentUser = FirebaseAuth.instance.currentUser;
   print("CurrentUser $currentUser");

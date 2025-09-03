@@ -27,7 +27,11 @@ class _LoginScreenState extends State<LoginScreen> {
         if (hasStats) {
           Navigator.pushReplacementNamed(context, '/');
         } else {
-          Navigator.pushReplacementNamed(context, '/categorySelection');
+          Navigator.pushReplacementNamed(
+            context,
+            '/categorySelection',
+            arguments: false,
+          );
         }
       } else {
         if (!mounted) return;

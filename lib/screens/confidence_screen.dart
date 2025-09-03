@@ -4,7 +4,8 @@ import 'package:namer_app/utils/category_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ConfidenceScreen extends StatefulWidget {
-  const ConfidenceScreen({super.key});
+  final bool isGuest;
+  const ConfidenceScreen({super.key, this.isGuest = false});
 
   @override
   State<ConfidenceScreen> createState() => _ConfidenceScreenState();
@@ -22,6 +23,13 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
   }
 
   void _saveSelections(Map<String, bool> categories) async {
+    if (widget.isGuest) {
+      print("Guest user – not saving to Firebase");
+      //Save user selections with shared_preferences
+      Navigator.pushReplacementNamed(context, '/');
+      return;
+    }
+
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       String? token = await user.getIdToken();
@@ -40,14 +48,14 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
     if (!mounted) return;
 
     if (ok) {
-      Navigator.pushNamed(context, '/');
+      Navigator.pushReplacementNamed(context, '/');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Error saving stats"),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
+          duration: Duration(seconds: 3),
         ),
       );
     }
@@ -112,9 +120,12 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final categories = args['categories'] as Map<String, bool>;
+    final bool isGuest = args['isGuest'] ?? false;
+
     final screenWidth = MediaQuery.of(context).size.width;
-    final categories =
-        ModalRoute.of(context)!.settings.arguments as Map<String, bool>;
     return Scaffold(
       backgroundColor: const Color(0xFF2B2726),
       body: SafeArea(
@@ -143,6 +154,12 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
                         color: Colors.white,
                       ),
                     ),
+                  ),
+                  Text(
+                    isGuest
+                        ? "Guest Mode: ON (local only)"
+                        : "Guest Mode: OFF (saving to Firebase)",
+                    style: const TextStyle(color: Colors.white70),
                   ),
                 ],
               ),

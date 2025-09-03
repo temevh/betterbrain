@@ -29,7 +29,11 @@ final Map<String, WidgetBuilder> appRoutes = {
     final args = ModalRoute.of(context)!.settings.arguments as bool;
     return CategorySelectionsScreen(isGuest: args);
   },
-  '/confidence': (context) => const ConfidenceScreen(),
+  '/confidence': (context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return ConfidenceScreen(isGuest: args['isGuest'] ?? false);
+  },
   '/loginscreen': (context) => const LoginScreen(),
   '/stats': (context) {
     final args =
