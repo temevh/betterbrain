@@ -109,10 +109,7 @@ class _CategorySelectionsScreenState extends State<CategorySelectionsScreen> {
                   color: Colors.white,
                 ),
               ),
-              Text(
-                widget.isGuest ? "Guest Mode: ON" : "Guest Mode: OFF",
-                style: const TextStyle(color: Colors.white),
-              ),
+
               SizedBox(height: screenHeight * 0.02),
               Expanded(
                 child: SingleChildScrollView(

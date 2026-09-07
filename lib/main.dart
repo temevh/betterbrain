@@ -1,23 +1,35 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/services/database_service.dart';
 import 'routes.dart';
 
 void main() async {
-  String initialRoute = '/start';
   WidgetsFlutterBinding.ensureInitialized();
-  //Check if local has guest info
+
+  String initialRoute = '/start';
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? guestExists = prefs.getString('selections');
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final User? currentUser = FirebaseAuth.instance.currentUser;
-  print("CurrentUser $currentUser");
+
+  print("CurrentUser: $currentUser");
+  print("Guest stats exist: ${guestExists != null}");
+
   if (currentUser != null) {
     if (await userHasStats(currentUser)) {
       initialRoute = '/';
     } else {
       initialRoute = '/categorySelection';
     }
+  } else if (guestExists != null) {
+    initialRoute = '/';
+  } else {
+    initialRoute = '/start';
   }
 
   runApp(MyApp(initialRoute: initialRoute));

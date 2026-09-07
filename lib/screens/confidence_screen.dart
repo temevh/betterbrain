@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:namer_app/services/database_service.dart';
 import 'package:namer_app/utils/category_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfidenceScreen extends StatefulWidget {
   final bool isGuest;
@@ -26,6 +29,9 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
     if (widget.isGuest) {
       print("Guest user – not saving to Firebase");
       //Save user selections with shared_preferences
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final jsonString = jsonEncode(confidence);
+      await prefs.setString('selections', jsonString);
       Navigator.pushReplacementNamed(context, '/');
       return;
     }
