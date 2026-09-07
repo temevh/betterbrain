@@ -55,7 +55,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     if (result.success && result.user != null) {
       errorCreating = false;
       // Success → navigate
-      Navigator.pushReplacementNamed(context, '/categorySelection');
+      Navigator.pushReplacementNamed(
+        context,
+        '/categorySelection',
+        arguments: false,
+      );
     } else {
       setState(() {
         errorCreating = true;
