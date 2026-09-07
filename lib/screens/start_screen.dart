@@ -131,6 +131,7 @@ class _StartScreenState extends State<StartScreen> {
                                 onPressed: () => Navigator.pushNamed(
                                   context,
                                   '/categorySelection',
+                                  arguments: true,
                                 ),
                               ),
                               const SizedBox(height: 32),
