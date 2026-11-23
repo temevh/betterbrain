@@ -11,28 +11,30 @@ class StartScreen extends StatefulWidget {
 
 class _StartScreenState extends State<StartScreen> {
   void _googleLogIn(BuildContext context) async {
+    final navigator = Navigator.of(context);
     final user = await signInWithGoogle();
-
-    if (user != null) {
-      print("Logged in with Google: ${user.email}");
-
-      if (!mounted) return;
-
-      // ignore: use_build_context_synchronously
-      final navigator = Navigator.of(context);
-
-      final hasStats = await userHasStats(user);
-
-      if (!mounted) return;
-
-      if (hasStats) {
-        navigator.pushReplacementNamed('/');
-      } else {
-        navigator.pushReplacementNamed('/categorySelection');
-      }
+    if (!mounted || user == null) return;
+    final hasStats = await userHasStats();
+    if (!mounted) return;
+    if (hasStats) {
+      navigator.pushReplacementNamed('/');
     } else {
-      print("Google login failed or cancelled");
+      navigator.pushReplacementNamed('/categorySelection');
     }
+  }
+
+  void _continueAsGuest(BuildContext context) async {
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final user = await continueAsGuest();
+    if (!mounted) return;
+    if (user == null) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Could not start guest mode. Try again.")),
+      );
+      return;
+    }
+    navigator.pushNamed('/categorySelection', arguments: true);
   }
 
   @override
@@ -128,11 +130,7 @@ class _StartScreenState extends State<StartScreen> {
                                   Icons.person_outline,
                                   color: Colors.white,
                                 ),
-                                onPressed: () => Navigator.pushNamed(
-                                  context,
-                                  '/categorySelection',
-                                  arguments: true,
-                                ),
+                                onPressed: () => _continueAsGuest(context),
                               ),
                               const SizedBox(height: 32),
                               Row(

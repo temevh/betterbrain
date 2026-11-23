@@ -30,29 +30,42 @@ class _SuccessScreenState extends State<SuccessScreen> {
     });
   }
 
-  void _onSavePressed() async {
-    print("Save pressed");
-    if (widget.taskData != null) {
-      bool success = await saveUserTask(
-        widget.taskData!,
-        selectedFeedback ?? 0,
-        reflectionText,
-        true,
-      );
+  bool _saving = false;
 
-      if (!mounted) return;
-      if (success) {
-        Navigator.pushReplacementNamed(
-          context,
-          '/',
-          arguments: {'isCompleted': true},
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to save task. Try again.")),
-        );
-      }
+  void _onSavePressed() async {
+    if (widget.taskData == null || _saving) return;
+    setState(() => _saving = true);
+
+    final saved = await completeDailyTask(selectedFeedback, reflectionText);
+
+    if (!mounted) return;
+    setState(() => _saving = false);
+    if (saved == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to save task. Try again.")),
+      );
+      return;
     }
+
+    // Show how the feedback moved the level, e.g. "FOCUS 4.2 -> 4.7".
+    final before = saved.levelBefore;
+    final after = saved.levelAfter;
+    if (before != null && after != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "${saved.category.toUpperCase()} level "
+            "${before.toStringAsFixed(1)} → ${after.toStringAsFixed(1)}",
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+    Navigator.pushReplacementNamed(
+      context,
+      '/',
+      arguments: {'isCompleted': true},
+    );
   }
 
   @override
@@ -126,7 +139,10 @@ class _SuccessScreenState extends State<SuccessScreen> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ShadowBtn(onPressed: _onSavePressed, btnText: "Save"),
+              child: ShadowBtn(
+                onPressed: _onSavePressed,
+                btnText: _saving ? "Saving..." : "Save",
+              ),
             ),
           ],
         ),

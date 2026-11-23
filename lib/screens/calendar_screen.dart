@@ -6,7 +6,8 @@ import 'package:namer_app/models/task.dart';
 class Event {
   final String category;
   final DateTime date;
-  final int difficulty;
+  final int? feedback;
+  final bool isMissed;
   final bool isCompleted;
   final String title;
   final String reflection;
@@ -14,7 +15,8 @@ class Event {
   Event({
     required this.category,
     required this.date,
-    required this.difficulty,
+    required this.feedback,
+    required this.isMissed,
     required this.isCompleted,
     required this.title,
     required this.reflection,
@@ -48,11 +50,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _setEvents(List<Task> userTasks) {
     final Map<DateTime, Event> eventsMap = {};
     for (var task in userTasks) {
-      final dateTime = task.date.toDate();
+      final dateTime = task.date;
       eventsMap[_normalizeDate(dateTime)] = Event(
         category: task.category,
         date: dateTime,
-        difficulty: task.difficulty,
+        feedback: task.feedback,
+        isMissed: task.status == TaskStatus.missed,
         isCompleted: task.isCompleted,
         title: task.taskText,
         reflection: task.reflection,
@@ -69,7 +72,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Color _bgForDay(DateTime day) {
     final event = _getEventForDay(day);
     if (event == null) return Colors.transparent;
-    return event.isCompleted ? Colors.green : Colors.red;
+    if (event.isCompleted) return Colors.green;
+    if (event.isMissed) return Colors.red;
+    return Colors.grey; // today's task, still open
   }
 
   void _determineStreak() {
@@ -77,6 +82,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
     DateTime today = _normalizeDate(DateTime.now());
 
     DateTime checkDay = today;
+    // Today's task still being open doesn't break the streak.
+    if (!(_getEventForDay(today)?.isCompleted ?? false)) {
+      checkDay = today.subtract(const Duration(days: 1));
+    }
 
     while (true) {
       final event = _getEventForDay(checkDay);

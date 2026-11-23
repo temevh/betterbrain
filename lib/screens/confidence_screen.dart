@@ -1,10 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:namer_app/services/database_service.dart';
 import 'package:namer_app/utils/category_utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfidenceScreen extends StatefulWidget {
   final bool isGuest;
@@ -26,28 +22,11 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
   }
 
   void _saveSelections(Map<String, bool> categories) async {
-    if (widget.isGuest) {
-      print("Guest user – not saving to Firebase");
-      //Save user selections with shared_preferences
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final jsonString = jsonEncode(confidence);
-      await prefs.setString('selections', jsonString);
-      Navigator.pushReplacementNamed(context, '/');
-      return;
-    }
-
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      String? token = await user.getIdToken();
-      print("Token: $token");
-    }
-
+    // Guests are Supabase anonymous users, so they are saved the same way.
     final selectedConfidence = {
       for (var entry in categories.entries)
         if (entry.value) entry.key: confidence[entry.key] ?? 1,
     };
-
-    print("Selected confidence: $selectedConfidence");
 
     final bool ok = await saveStats(selectedConfidence);
 
@@ -161,12 +140,11 @@ class _ConfidenceScreenState extends State<ConfidenceScreen> {
                       ),
                     ),
                   ),
-                  Text(
-                    isGuest
-                        ? "Guest Mode: ON (local only)"
-                        : "Guest Mode: OFF (saving to Firebase)",
-                    style: const TextStyle(color: Colors.white70),
-                  ),
+                  if (isGuest)
+                    const Text(
+                      "Guest mode: create an account later to keep your progress across devices",
+                      style: TextStyle(color: Colors.white70),
+                    ),
                 ],
               ),
             ),

@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/services/database_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show User;
 
 class DrawerWidget extends StatelessWidget {
   final User user;
@@ -9,8 +9,32 @@ class DrawerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void logOutPressed() async {
-      await FirebaseAuth.instance.signOut();
-      Navigator.pushReplacementNamed(context, '/start');
+      final navigator = Navigator.of(context);
+      if (user.isAnonymous) {
+        // A guest who logs out can't get back into the same account.
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Log out of guest mode?"),
+            content: const Text(
+              "Your guest progress will be lost. Create an account first to keep it.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text("Log out"),
+              ),
+            ],
+          ),
+        );
+        if (confirmed != true) return;
+      }
+      await signOut();
+      navigator.pushNamedAndRemoveUntil('/start', (route) => false);
     }
 
     return Drawer(
@@ -26,6 +50,32 @@ class DrawerWidget extends StatelessWidget {
                 ),
                 children: [
                   const SizedBox(height: 20),
+                  if (user.isAnonymous) ...[
+                    ListTile(
+                      leading: const Icon(
+                        Icons.person_add,
+                        color: Colors.greenAccent,
+                      ),
+                      title: const Text(
+                        'Create account',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      subtitle: const Text(
+                        'Keep your progress across devices',
+                        style: TextStyle(color: Colors.white54),
+                      ),
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/createAccount'),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      tileColor: Colors.white10,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
                   ListTile(
                     leading: const Icon(
                       Icons.calendar_today,
@@ -71,7 +121,7 @@ class DrawerWidget extends StatelessWidget {
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     onTap: () async {
-                      final stats = await getUserStats(user);
+                      final stats = await getUserStats();
                       Navigator.pushNamed(context, '/stats', arguments: stats);
                     },
                     shape: RoundedRectangleBorder(

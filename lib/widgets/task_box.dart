@@ -25,6 +25,8 @@ class _TaskBoxState extends State<TaskBox> {
     final screenWidth = MediaQuery.of(context).size.width;
     final category = widget.taskData?['category'] ?? '';
     final task = widget.taskData?['task'] ?? 'No task found :/';
+    final String? tip = widget.taskData?['tip'];
+    final DateTime date = widget.taskData?['date'] ?? DateTime.now();
 
     return Column(
       children: [
@@ -51,7 +53,7 @@ class _TaskBoxState extends State<TaskBox> {
               Opacity(
                 opacity: 0.5,
                 child: Text(
-                  DateFormat("dd.MM.yyyy").format(DateTime.now()),
+                  DateFormat("dd.MM.yyyy").format(date),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: screenHeight * 0.02,
@@ -83,6 +85,24 @@ class _TaskBoxState extends State<TaskBox> {
                   ),
                 ),
               ),
+              if (tip != null && tip.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: screenWidth * 0.75,
+                  child: Opacity(
+                    opacity: 0.7,
+                    child: Text(
+                      tip,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenHeight * 0.018,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 20),
               CategoryPill(category: category, size: screenHeight * 0.02),
             ],
