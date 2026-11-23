@@ -14,6 +14,16 @@ migrate_working_dir/
 /lib/firebase_options.dart
 firebase_options.dart
 
+# Supabase / Google client config (copy config/app_config.example.json)
+/config/app_config.json
+# Local Supabase CLI state
+/supabase/.temp/
+/supabase/.branches/
+# Firebase data export used by scripts/migrate_firebase_data.mjs
+/scripts/firebase-export/
+/scripts/node_modules/
+*.service-account.json
+
 # IntelliJ related
 *.iml
 *.ipr

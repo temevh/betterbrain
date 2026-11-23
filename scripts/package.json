@@ -1,0 +1,12 @@
+{
+  "name": "better-brain-migration-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "migrate": "node migrate_firebase_data.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "firebase-admin": "^12.0.0"
+  }
+}
