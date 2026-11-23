@@ -1,35 +1,34 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:namer_app/config.dart';
 import 'package:namer_app/services/database_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  if (!AppConfig.isConfigured) {
+    runApp(const _MissingConfigApp());
+    return;
+  }
+
+  await Supabase.initialize(
+    url: AppConfig.supabaseUrl,
+    anonKey: AppConfig.supabaseAnonKey,
+  );
+
+  // Guests from the Firebase version only had local selections; move them to
+  // an anonymous Supabase user so they start getting daily tasks.
+  await migrateLegacyGuest();
+
   String initialRoute = '/start';
-
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final String? guestExists = prefs.getString('selections');
-
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final User? currentUser = FirebaseAuth.instance.currentUser;
-
-  print("CurrentUser: $currentUser");
-  print("Guest stats exist: ${guestExists != null}");
-
   if (currentUser != null) {
-    if (await userHasStats(currentUser)) {
+    try {
+      initialRoute = await userHasStats() ? '/' : '/categorySelection';
+    } catch (e) {
+      debugPrint('Could not load profile: $e');
       initialRoute = '/';
-    } else {
-      initialRoute = '/categorySelection';
     }
-  } else if (guestExists != null) {
-    initialRoute = '/';
-  } else {
-    initialRoute = '/start';
   }
 
   runApp(MyApp(initialRoute: initialRoute));
@@ -65,6 +64,33 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: initialRoute,
       routes: appRoutes,
+    );
+  }
+}
+
+/// Shown when the app was built without SUPABASE_URL / SUPABASE_ANON_KEY.
+class _MissingConfigApp extends StatelessWidget {
+  const _MissingConfigApp();
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Color(0xFF2B2726),
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.all(32),
+            child: Text(
+              'Supabase is not configured.\n\n'
+              'Copy config/app_config.example.json to config/app_config.json, '
+              'fill in your project URL and anon key, and run:\n\n'
+              'flutter run --dart-define-from-file=config/app_config.json',
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

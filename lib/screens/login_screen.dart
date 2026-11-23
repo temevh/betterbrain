@@ -20,8 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final result = await loginWithEmail(email, password);
 
       if (result.success && result.user != null) {
-        final user = result.user!;
-        final hasStats = await userHasStats(user);
+        final hasStats = await userHasStats();
 
         if (!mounted) return;
         if (hasStats) {
@@ -41,6 +40,18 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       setState(() => errorMessage = 'Unexpected error: $e');
     }
+  }
+
+  Future<void> _handleForgotPassword() async {
+    if (email.trim().isEmpty) {
+      setState(() => errorMessage = 'Enter your email first.');
+      return;
+    }
+    final message = await sendPasswordReset(email);
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -81,6 +92,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icons.lock,
                 (value) => setState(() => password = value),
                 obscure: true,
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _handleForgotPassword,
+                  child: const Text(
+                    "Forgot password?",
+                    style: TextStyle(color: Colors.greenAccent),
+                  ),
+                ),
               ),
 
               const Spacer(),

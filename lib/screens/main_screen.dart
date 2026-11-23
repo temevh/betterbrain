@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/services/database_service.dart';
 import '../widgets/task_box.dart';
 import '../buttons/shadow_btn.dart';
-import 'dart:math';
 import 'package:namer_app/widgets/countdown.dart';
 import 'package:namer_app/models/task.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:namer_app/widgets/drawer_widget.dart';
 
 class MainScreen extends StatefulWidget {
@@ -20,75 +17,44 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   Task? _todayTask;
   bool _loading = true;
+  bool _swapping = false;
+
   @override
   void initState() {
     super.initState();
-    _initialize();
+    _loadTask();
   }
 
-  Future<void> _initialize() async {
-    try {
-      final task = await getDailyTask(DateTime.now());
-      if (task != null) {
-        setState(() {
-          _todayTask = task;
-          _loading = false;
-        });
-      } else {
-        await _setDailyTask();
-      }
-    } catch (e) {
-      print("Error initializing main screen: $e");
-      setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _setDailyTask() async {
-    final User? currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null || currentUser.email == null) {
-      setState(() => _loading = false);
-      return;
-    }
-
-    final userStats = await getUserStats(currentUser);
-    var random = Random();
-    var entriesList = userStats.entries.toList();
-    String randomStat = entriesList[random.nextInt(entriesList.length)].key;
-    double? statValue = userStats[randomStat];
-    final randomTask = await getRandomTask(randomStat);
-    String compiledTask = randomTask["task"].replaceAll(
-      '§',
-      (statValue! * randomTask['multiplier']).ceil().toInt().toString(),
-    );
-
+  // The server assigns and stores today's task on first request, and records
+  // missed days itself, so the app only has to ask for today's task.
+  Future<void> _loadTask() async {
+    setState(() => _loading = true);
+    final task = await getDailyTask();
+    if (!mounted) return;
     setState(() {
-      _todayTask = Task(
-        taskText: compiledTask,
-        category: randomStat,
-        reflection: "",
-        isCompleted: false,
-        difficulty: 1,
-        day: DateTime.now().day,
-        month: DateTime.now().month,
-        year: DateTime.now().year,
-        createdAt: Timestamp.now(),
-        date: Timestamp.fromDate(DateTime.now()),
-      );
+      _todayTask = task;
       _loading = false;
     });
   }
 
-  void resetTask() async {
-    print("resetting task");
-    setState(() {
-      _loading = true;
-    });
-
-    if (_todayTask != null && !_todayTask!.isCompleted) {
-      await saveUserTask(_todayTask!, 404, "Task not completed", false);
+  Future<void> _swapTask() async {
+    setState(() => _swapping = true);
+    try {
+      final task = await swapDailyTask();
+      if (!mounted) return;
+      setState(() => _todayTask = task);
+    } catch (message) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message.toString())));
+    } finally {
+      if (mounted) setState(() => _swapping = false);
     }
+  }
 
-    await _setDailyTask();
+  void resetTask() {
+    _loadTask();
   }
 
   @override
@@ -124,8 +90,8 @@ class _MainScreenState extends State<MainScreen> {
           },
         ),
       ),
-      drawer: FirebaseAuth.instance.currentUser != null
-          ? DrawerWidget(user: FirebaseAuth.instance.currentUser!)
+      drawer: currentUser != null
+          ? DrawerWidget(user: currentUser!)
           : const SizedBox.shrink(),
       backgroundColor: isCompleted ? Colors.green : const Color(0xFF2B2726),
       body: Center(
@@ -143,6 +109,8 @@ class _MainScreenState extends State<MainScreen> {
                       taskData: {
                         "task": _todayTask!.taskText,
                         "category": _todayTask!.category,
+                        "tip": _todayTask!.tip,
+                        "date": _todayTask!.date,
                       },
                     ),
                     SizedBox(height: screenWidth * 0.1),
@@ -163,6 +131,21 @@ class _MainScreenState extends State<MainScreen> {
                             },
                             btnText: "Mark completed",
                           ),
+                          const SizedBox(height: 8),
+                          if (_todayTask!.canSwap)
+                            TextButton.icon(
+                              onPressed: _swapping ? null : _swapTask,
+                              icon: const Icon(
+                                Icons.swap_horiz,
+                                color: Colors.white70,
+                              ),
+                              label: Text(
+                                _swapping
+                                    ? "Swapping..."
+                                    : "Not today? Swap task (1 free swap per day)",
+                                style: const TextStyle(color: Colors.white70),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -198,7 +181,17 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ],
                 )
-              : const Text("No task available"),
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Could not load today's task."),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: _loadTask,
+                      child: const Text("Try again"),
+                    ),
+                  ],
+                ),
         ),
       ),
     );

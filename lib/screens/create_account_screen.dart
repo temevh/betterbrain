@@ -50,23 +50,27 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   void _savePressed() async {
     final result = await createAccount(email, password);
-
     if (!mounted) return;
-    if (result.success && result.user != null) {
-      errorCreating = false;
-      // Success → navigate
-      Navigator.pushReplacementNamed(
-        context,
-        '/categorySelection',
-        arguments: false,
-      );
-    } else {
-      setState(() {
-        errorCreating = true;
-      });
-    }
-    message = result.message;
 
+    errorCreating = !result.success;
+    if (result.success) {
+      if (result.code == 'upgraded') {
+        // A guest kept their data; go straight back to today's task.
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+      } else if (result.code == 'confirm-email') {
+        Navigator.pushReplacementNamed(context, '/loginscreen');
+      } else {
+        Navigator.pushReplacementNamed(
+          context,
+          '/categorySelection',
+          arguments: false,
+        );
+      }
+    } else {
+      setState(() {});
+    }
+
+    message = result.message;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),

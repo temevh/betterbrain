@@ -10,25 +10,22 @@ class EventCard extends StatelessWidget {
   const EventCard({super.key, required this.event, required this.selectedDate});
 
   Color _getContainerColor() {
-    if (event.isCompleted) {
-      return Colors.green;
-    } else {
-      return Colors.red;
-    }
+    if (event.isCompleted) return Colors.green;
+    if (event.isMissed) return Colors.red;
+    return Colors.grey;
   }
 
-  String getDifficultyEmoji(int difficulty) {
-    switch (difficulty) {
+  String getDifficultyEmoji(Event event) {
+    if (event.isMissed) return "❌ Missed";
+    switch (event.feedback) {
       case -1:
         return "😓 Too hard";
       case 0:
         return "🙂 Just right";
       case 1:
         return "😴 Too easy";
-      case 404:
-        return "❓ unknown";
       default:
-        return "❓ unknown";
+        return "❓ No feedback";
     }
   }
 
@@ -67,7 +64,7 @@ class EventCard extends StatelessWidget {
               CategoryPill(category: category, size: 14),
               const SizedBox(height: 10),
               Text(
-                getDifficultyEmoji(event.difficulty),
+                getDifficultyEmoji(event),
                 style: TextStyle(color: Colors.black, fontSize: 20),
               ),
               SizedBox(height: 10),
